@@ -21,6 +21,8 @@ namespace Proyecto_Reuniones
 
         private void btnIniciarSesión_Click(object sender, EventArgs e)
         {
+
+            MessageBox.Show("Esperando la conexion de la base de dato");
             try
             {
                 // Conectamos a la base de datos
@@ -51,6 +53,7 @@ namespace Proyecto_Reuniones
                             Rol = rolDB, // Asignamos el rol tal cual está en la DB
                             IdSemillero = usuario["idSemillero"].AsInt32 // Obtenemos el ID del semillero desde la DB
                         };
+
 
                         // Enviar a la pantalla principal
                         FormPrincipal frm = new FormPrincipal(datos);
