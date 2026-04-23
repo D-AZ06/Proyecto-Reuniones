@@ -1,0 +1,4 @@
+Instrucciones
+
+1. renombran este archivo a LlaveAcceso
+2. borran todo aquí y pegan la dirección de la base de datos

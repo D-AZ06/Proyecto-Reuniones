@@ -1,0 +1,25 @@
+# --- Archivos de compilación (Binarios) ---
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# --- Configuración de Visual Studio ---
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# --- Archivos de paquetes de NuGet ---
+packages/
+*.nuget.props
+*.nuget.targets
+
+# --- Otros (Temporales de Windows y VS Code) ---
+.vscode/
+Thumbs.db
+desktop.ini
+
+# --- Configuraciones Sensibles ---
+LlaveAcceso.text
