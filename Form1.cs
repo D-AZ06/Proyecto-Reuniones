@@ -21,8 +21,15 @@ namespace Proyecto_Reuniones
 
         private void btnIniciarSesión_Click(object sender, EventArgs e)
         {
+            if (txtCorreo.Text == "" || txtContraseña.Text == "")
+            {
+                MessageBox.Show("Campos vacios, por favor rellene todos los campos correspondientes");
+                return;
+            }
 
-            MessageBox.Show("Esperando la conexion de la base de dato");
+            btnIniciarSesión.Enabled = false;
+            lblConexion.Text = "Experando conexión con la base de datos...";
+            
             try
             {
                 // Conectamos a la base de datos
@@ -65,17 +72,24 @@ namespace Proyecto_Reuniones
                         // Este es el error por si el rol en la DB está mal escrito o no existe
                         MessageBox.Show($"El rol asignado '{rolDB}' no es válido. Contacte al administrador.",
                                         "Error de Configuración", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        
+                        btnIniciarSesión.Enabled = true;
+                        lblConexion.Text = "";
                     }
                 }
                 else
                 {
                     MessageBox.Show("Correo o contraseña incorrectos.", "Acceso Denegado",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    btnIniciarSesión.Enabled = true;
+                    lblConexion.Text = "";
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error de conexión: " + ex.Message);
+                btnIniciarSesión.Enabled = true;
+                lblConexion.Text = "";
             }
         }
     }

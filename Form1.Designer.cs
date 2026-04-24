@@ -34,11 +34,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtContraseña = new System.Windows.Forms.TextBox();
             this.txtCorreo = new System.Windows.Forms.TextBox();
+            this.lblConexion = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblConexion);
             this.groupBox1.Controls.Add(this.btnIniciarSesión);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
@@ -95,6 +97,15 @@
             this.txtCorreo.TabIndex = 0;
             this.txtCorreo.UseWaitCursor = true;
             // 
+            // lblConexion
+            // 
+            this.lblConexion.AutoSize = true;
+            this.lblConexion.Location = new System.Drawing.Point(280, 437);
+            this.lblConexion.Name = "lblConexion";
+            this.lblConexion.Size = new System.Drawing.Size(13, 16);
+            this.lblConexion.TabIndex = 5;
+            this.lblConexion.Text = "  ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -103,7 +114,7 @@
             this.ControlBox = false;
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.ShowIcon = false;
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -118,6 +129,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtContraseña;
         private System.Windows.Forms.TextBox txtCorreo;
+        private System.Windows.Forms.Label lblConexion;
     }
 }
 
