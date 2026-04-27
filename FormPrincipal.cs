@@ -79,52 +79,76 @@ namespace Proyecto_Reuniones
 
         private async void btnVerReunion_Click(object sender, EventArgs e)
         {
-            var db = Conexion.ObtenerBaseDatos();
-            var coleccion = db.GetCollection<BsonDocument>("Reuniones");
-
-            FilterDefinition<BsonDocument> filtro;
-
-            // Convertimos a int para que coincida con el color azul de tu Compass
-            int idUsuarioLogueado = Convert.ToInt32(datosUsuario.IdUsuario);
-            int idSemilleroUsuario = Convert.ToInt32(datosUsuario.IdSemillero);
-
-            if (datosUsuario.Rol == "Líder")
+            try
             {
-                // El líder ve las reuniones donde idLider coincide con su ID
-                // (O si tienes un campo idSemillero en la reunión, úsalo aquí)
-                filtro = Builders<BsonDocument>.Filter.Eq("idLider", idUsuarioLogueado);
-            }
-            else
-            {
-                // El investigador ve donde su ID está dentro del array idInvestigadores
-                filtro = Builders<BsonDocument>.Filter.AnyEq("idInvestigadores", idUsuarioLogueado);
-            }
+                var coleccion = Conexion.ObtenerBaseDatos().GetCollection<BsonDocument>("Reuniones");
+                int idUsuario = Convert.ToInt32(datosUsuario.IdUsuario);
+                bool esLider = datosUsuario.Rol == "Líder";
 
-            var listaDocs = await coleccion.Find(filtro).ToListAsync();
+                var filtro = esLider
+                    ? Builders<BsonDocument>.Filter.Eq("idLider", idUsuario)
+                    : Builders<BsonDocument>.Filter.AnyEq("idInvestigadores", idUsuario);
 
-            var consulta = listaDocs.Select(r => new
-            {
-                Cod = r["idReunion"].ToInt32(),
-                Fecha = r["fechaReunion"].AsString,
-                Inicio = r["horaInicio"].AsString,
-                Fin = r["horaFin"].AsString,
-                Asunto = r["motivoReunion"].AsString,
-                Líder = r["idLider"].ToInt32()
-            }).ToList();
+                var docs = await coleccion.Find(filtro).ToListAsync();
 
-            dataGridView1.DataSource = null;
-            if (consulta.Count > 0)
-            {
-                dataGridView1.DataSource = consulta;
+                if (docs.Count == 0)
+                {
+                    dataGridView1.DataSource = null;
+                    MessageBox.Show(
+                        esLider ? "No hay reuniones programadas en tu semillero."
+                                : "No estás registrado en ninguna reunión.",
+                        "Sin resultados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
-                // Mejoras visuales que pediste al principio
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                var tabla = new DataTable();
+                tabla.Columns.Add("Cód.", typeof(int));
+                tabla.Columns.Add("Fecha", typeof(string));
+                tabla.Columns.Add("Inicio", typeof(string));
+                tabla.Columns.Add("Fin", typeof(string));
+                tabla.Columns.Add("Motivo", typeof(string));
+                tabla.Columns.Add("Lugar", typeof(string));
+
+                if (esLider)
+                    tabla.Columns.Add("Asistentes (IDs)", typeof(string));
+                else
+                    tabla.Columns.Add("Cód. Líder", typeof(int));
+
+                foreach (var r in docs)
+                {
+                    string asistentes = "";
+                    if (esLider && r.Contains("idInvestigadores") && r["idInvestigadores"].IsBsonArray)
+                        asistentes = string.Join(", ", r["idInvestigadores"].AsBsonArray.Select(x => x.ToString()));
+
+                    tabla.Rows.Add(
+                        r["idReunion"].ToInt32(),
+                        r["fechaReunion"].AsString,
+                        r["horaInicio"].AsString,
+                        r["horaFin"].AsString,
+                        r["motivoReunion"].AsString,
+                        r["lugarReunion"].AsString,
+                        esLider ? (object)asistentes : r["idLider"].ToInt32()
+                    );
+                }
+
+                dataGridView1.DataSource = tabla;
+
+                // ── Estilo y tamaño del DataGridView ──────────────────────────────
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells; // cada columna se ajusta a su contenido
+                dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;    // filas también
+                dataGridView1.ScrollBars = ScrollBars.Both;                          // scroll horizontal y vertical
+                dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;          // si el texto es largo, hace wrap
+
                 dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightSteelBlue;
+                dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                dataGridView1.DefaultCellStyle.SelectionBackColor = Color.SteelBlue;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No se encontraron reuniones para este usuario.");
+                MessageBox.Show($"Error al cargar reuniones:\n{ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
         }
     }
 }
