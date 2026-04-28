@@ -52,7 +52,7 @@ namespace Proyecto_Reuniones
 
         private void btnAgregarReunión_Click(object sender, EventArgs e)
         {
-            FormAgregar formAgregar = new FormAgregar();
+            FormAgregar formAgregar = new FormAgregar(this.datosUsuario);
             formAgregar.ShowDialog();
         }
 
