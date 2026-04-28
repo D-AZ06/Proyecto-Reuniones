@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblConexion = new System.Windows.Forms.Label();
             this.btnIniciarSesión = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtContraseña = new System.Windows.Forms.TextBox();
             this.txtCorreo = new System.Windows.Forms.TextBox();
-            this.lblConexion = new System.Windows.Forms.Label();
+            this.btnSalir = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +53,15 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Iniciar Sesión";
+            // 
+            // lblConexion
+            // 
+            this.lblConexion.AutoSize = true;
+            this.lblConexion.Location = new System.Drawing.Point(280, 437);
+            this.lblConexion.Name = "lblConexion";
+            this.lblConexion.Size = new System.Drawing.Size(13, 16);
+            this.lblConexion.TabIndex = 5;
+            this.lblConexion.Text = "  ";
             // 
             // btnIniciarSesión
             // 
@@ -97,14 +107,15 @@
             this.txtCorreo.TabIndex = 0;
             this.txtCorreo.UseWaitCursor = true;
             // 
-            // lblConexion
+            // btnSalir
             // 
-            this.lblConexion.AutoSize = true;
-            this.lblConexion.Location = new System.Drawing.Point(280, 437);
-            this.lblConexion.Name = "lblConexion";
-            this.lblConexion.Size = new System.Drawing.Size(13, 16);
-            this.lblConexion.TabIndex = 5;
-            this.lblConexion.Text = "  ";
+            this.btnSalir.Location = new System.Drawing.Point(48, 41);
+            this.btnSalir.Name = "btnSalir";
+            this.btnSalir.Size = new System.Drawing.Size(98, 48);
+            this.btnSalir.TabIndex = 2;
+            this.btnSalir.Text = "Salir del Programa";
+            this.btnSalir.UseVisualStyleBackColor = true;
+            this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
             // 
             // Form1
             // 
@@ -112,9 +123,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1512, 791);
             this.ControlBox = false;
+            this.Controls.Add(this.btnSalir);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -130,6 +143,7 @@
         private System.Windows.Forms.TextBox txtContraseña;
         private System.Windows.Forms.TextBox txtCorreo;
         private System.Windows.Forms.Label lblConexion;
+        private System.Windows.Forms.Button btnSalir;
     }
 }
 

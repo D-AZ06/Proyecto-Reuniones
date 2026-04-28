@@ -29,6 +29,17 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnLimpiar = new System.Windows.Forms.Button();
+            this.btnGuardar = new System.Windows.Forms.Button();
+            this.label10 = new System.Windows.Forms.Label();
+            this.clbListaInvestigadores = new System.Windows.Forms.CheckedListBox();
+            this.txtIdSemillero = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cboLugarReunion = new System.Windows.Forms.ComboBox();
+            this.txtIdLider = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtLiderResponsable = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.txtMotivoReunión = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -40,17 +51,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtIdReunion = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.txtLiderResponsable = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.txtIdLider = new System.Windows.Forms.TextBox();
-            this.cboLugarReunion = new System.Windows.Forms.ComboBox();
-            this.txtIdSemillero = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.clbListaInvestigadores = new System.Windows.Forms.CheckedListBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.btnGuardar = new System.Windows.Forms.Button();
-            this.btnLimpiar = new System.Windows.Forms.Button();
+            this.btnCancelar = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,6 +85,98 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Agregar Reunión";
+            // 
+            // btnLimpiar
+            // 
+            this.btnLimpiar.Location = new System.Drawing.Point(363, 790);
+            this.btnLimpiar.Name = "btnLimpiar";
+            this.btnLimpiar.Size = new System.Drawing.Size(98, 49);
+            this.btnLimpiar.TabIndex = 22;
+            this.btnLimpiar.Text = "Limpiar Campos";
+            this.btnLimpiar.UseVisualStyleBackColor = true;
+            // 
+            // btnGuardar
+            // 
+            this.btnGuardar.Location = new System.Drawing.Point(189, 790);
+            this.btnGuardar.Name = "btnGuardar";
+            this.btnGuardar.Size = new System.Drawing.Size(98, 49);
+            this.btnGuardar.TabIndex = 21;
+            this.btnGuardar.Text = "Guardar Reunión";
+            this.btnGuardar.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(36, 632);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(148, 16);
+            this.label10.TabIndex = 20;
+            this.label10.Text = "Agregar Investigadores";
+            // 
+            // clbListaInvestigadores
+            // 
+            this.clbListaInvestigadores.FormattingEnabled = true;
+            this.clbListaInvestigadores.Location = new System.Drawing.Point(291, 632);
+            this.clbListaInvestigadores.Name = "clbListaInvestigadores";
+            this.clbListaInvestigadores.ScrollAlwaysVisible = true;
+            this.clbListaInvestigadores.Size = new System.Drawing.Size(277, 106);
+            this.clbListaInvestigadores.TabIndex = 19;
+            // 
+            // txtIdSemillero
+            // 
+            this.txtIdSemillero.Location = new System.Drawing.Point(291, 578);
+            this.txtIdSemillero.Name = "txtIdSemillero";
+            this.txtIdSemillero.Size = new System.Drawing.Size(277, 22);
+            this.txtIdSemillero.TabIndex = 18;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(36, 578);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(80, 16);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "ID Semillero";
+            // 
+            // cboLugarReunion
+            // 
+            this.cboLugarReunion.FormattingEnabled = true;
+            this.cboLugarReunion.Location = new System.Drawing.Point(291, 473);
+            this.cboLugarReunion.Name = "cboLugarReunion";
+            this.cboLugarReunion.Size = new System.Drawing.Size(277, 24);
+            this.cboLugarReunion.TabIndex = 16;
+            // 
+            // txtIdLider
+            // 
+            this.txtIdLider.Location = new System.Drawing.Point(496, 527);
+            this.txtIdLider.Name = "txtIdLider";
+            this.txtIdLider.Size = new System.Drawing.Size(72, 22);
+            this.txtIdLider.TabIndex = 15;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(470, 530);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(20, 16);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "ID";
+            // 
+            // txtLiderResponsable
+            // 
+            this.txtLiderResponsable.Location = new System.Drawing.Point(291, 527);
+            this.txtLiderResponsable.Name = "txtLiderResponsable";
+            this.txtLiderResponsable.Size = new System.Drawing.Size(152, 22);
+            this.txtLiderResponsable.TabIndex = 13;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(36, 527);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(122, 16);
+            this.label7.TabIndex = 12;
+            this.label7.Text = "Líder Responsable";
             // 
             // label6
             // 
@@ -182,97 +275,15 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "ID Reunión";
             // 
-            // label7
+            // btnCancelar
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(36, 527);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(122, 16);
-            this.label7.TabIndex = 12;
-            this.label7.Text = "Líder Responsable";
-            // 
-            // txtLiderResponsable
-            // 
-            this.txtLiderResponsable.Location = new System.Drawing.Point(291, 527);
-            this.txtLiderResponsable.Name = "txtLiderResponsable";
-            this.txtLiderResponsable.Size = new System.Drawing.Size(152, 22);
-            this.txtLiderResponsable.TabIndex = 13;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(470, 530);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(20, 16);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "ID";
-            // 
-            // txtIdLider
-            // 
-            this.txtIdLider.Location = new System.Drawing.Point(496, 527);
-            this.txtIdLider.Name = "txtIdLider";
-            this.txtIdLider.Size = new System.Drawing.Size(72, 22);
-            this.txtIdLider.TabIndex = 15;
-            // 
-            // cboLugarReunion
-            // 
-            this.cboLugarReunion.FormattingEnabled = true;
-            this.cboLugarReunion.Location = new System.Drawing.Point(291, 473);
-            this.cboLugarReunion.Name = "cboLugarReunion";
-            this.cboLugarReunion.Size = new System.Drawing.Size(277, 24);
-            this.cboLugarReunion.TabIndex = 16;
-            // 
-            // txtIdSemillero
-            // 
-            this.txtIdSemillero.Location = new System.Drawing.Point(291, 578);
-            this.txtIdSemillero.Name = "txtIdSemillero";
-            this.txtIdSemillero.Size = new System.Drawing.Size(277, 22);
-            this.txtIdSemillero.TabIndex = 18;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(36, 578);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(80, 16);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "ID Semillero";
-            // 
-            // clbListaInvestigadores
-            // 
-            this.clbListaInvestigadores.FormattingEnabled = true;
-            this.clbListaInvestigadores.Location = new System.Drawing.Point(291, 632);
-            this.clbListaInvestigadores.Name = "clbListaInvestigadores";
-            this.clbListaInvestigadores.ScrollAlwaysVisible = true;
-            this.clbListaInvestigadores.Size = new System.Drawing.Size(277, 106);
-            this.clbListaInvestigadores.TabIndex = 19;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(36, 632);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(148, 16);
-            this.label10.TabIndex = 20;
-            this.label10.Text = "Agregar Investigadores";
-            // 
-            // btnGuardar
-            // 
-            this.btnGuardar.Location = new System.Drawing.Point(189, 790);
-            this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(98, 49);
-            this.btnGuardar.TabIndex = 21;
-            this.btnGuardar.Text = "Guardar Reunión";
-            this.btnGuardar.UseVisualStyleBackColor = true;
-            // 
-            // btnLimpiar
-            // 
-            this.btnLimpiar.Location = new System.Drawing.Point(363, 790);
-            this.btnLimpiar.Name = "btnLimpiar";
-            this.btnLimpiar.Size = new System.Drawing.Size(98, 49);
-            this.btnLimpiar.TabIndex = 22;
-            this.btnLimpiar.Text = "Limpiar Campos";
-            this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnCancelar.Location = new System.Drawing.Point(852, 77);
+            this.btnCancelar.Name = "btnCancelar";
+            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.TabIndex = 1;
+            this.btnCancelar.Text = "Cancelar";
+            this.btnCancelar.UseVisualStyleBackColor = true;
+            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // FormAgregar
             // 
@@ -280,6 +291,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 925);
             this.ControlBox = false;
+            this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.groupBox1);
             this.Name = "FormAgregar";
             this.ShowIcon = false;
@@ -314,5 +326,6 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnGuardar;
+        private System.Windows.Forms.Button btnCancelar;
     }
 }

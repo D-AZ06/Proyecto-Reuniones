@@ -16,5 +16,14 @@ namespace Proyecto_Reuniones
         {
             InitializeComponent();
         }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("¿Estás seguro de cancelar la creación de la reunión?", "Cancelar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                this.Close();
+            }
+        }
     }
 }

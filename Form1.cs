@@ -92,5 +92,14 @@ namespace Proyecto_Reuniones
                 lblConexion.Text = "";
             }
         }
+
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("¿Estás seguro de salir de la aplicación?", "Salir", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }
     }
 }
