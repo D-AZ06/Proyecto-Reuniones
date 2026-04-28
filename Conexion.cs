@@ -21,9 +21,9 @@ namespace Proyecto_Reuniones
                 var cliente = new MongoClient(uri);
                 return cliente.GetDatabase("BD-ProReuniones");
             }
-            catch
+            catch (FileNotFoundException ex) 
             {
-                MessageBox.Show("No se encontró la llave de conexión (llave.txt)");
+                MessageBox.Show(ex.Message, "Error de Conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
         }

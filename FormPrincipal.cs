@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using DnsClient.Protocol;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Proyecto_Reuniones
     public partial class FormPrincipal : Form
     {
         private DatosUsuario datosUsuario;
+        private Control controlActual;
 
         public FormPrincipal(DatosUsuario datos)
         {
@@ -213,6 +215,60 @@ namespace Proyecto_Reuniones
             dataGridView1.ScrollBars = ScrollBars.Both;
             dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightSteelBlue;
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+        }
+
+        private void cboFiltro_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            panelFiltro.Controls.Clear();
+
+            if (cboFiltro.Text == "idReunion" || cboFiltro.Text == "motivoReunion" || cboFiltro.Text == "lugarReunion" || cboFiltro.Text == "idInvestigadores")
+            {
+                TextBox txt = new TextBox();
+                controlActual = txt;
+            }
+            else if (cboFiltro.Text == "fechaReunion")
+            {
+                DateTimePicker dtp = new DateTimePicker();
+                ((DateTimePicker)controlActual).Format = DateTimePickerFormat.Short;
+                controlActual = dtp;
+            }
+            else if (cboFiltro.Text == "horaInicio" || cboFiltro.Text == "horaFin")
+            {
+                DateTimePicker dtp = new DateTimePicker();
+                dtp.Format = DateTimePickerFormat.Custom;
+                dtp.CustomFormat = "HH:mm tt"; // ← sin segundos
+                dtp.ShowUpDown = true;
+                controlActual = dtp;
+            }
+            else
+            {
+                return; // Si no se selecciona un filtro válido, no hacemos nada
+            }
+
+            controlActual.Dock = DockStyle.Fill;
+            panelFiltro.Controls.Add(controlActual); // 2. meto el nuevo
+        }
+
+        private string ObtenerValorDelControl()
+        {
+            if (controlActual is TextBox txt)
+            {
+                return txt.Text;
+            }
+
+            if (controlActual is DateTimePicker dtp)
+            {
+                if (dtp.Format == DateTimePickerFormat.Short)
+                {
+                    return dtp.Value.ToString("dd-MM-yyyy"); // fecha
+                }
+
+                else
+                {
+                    return dtp.Value.ToString("HH:mm tt"); // hora
+                } 
+            }
+            return "";
         }
     }
 }

@@ -30,6 +30,8 @@
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cboFiltro = new System.Windows.Forms.ComboBox();
+            this.panelFiltro = new System.Windows.Forms.Panel();
             this.btn_Consultar_con_parametros = new System.Windows.Forms.Button();
             this.btnAtras = new System.Windows.Forms.Button();
             this.btnAgregarReunión = new System.Windows.Forms.Button();
@@ -50,6 +52,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cboFiltro);
+            this.groupBox1.Controls.Add(this.panelFiltro);
             this.groupBox1.Controls.Add(this.btn_Consultar_con_parametros);
             this.groupBox1.Location = new System.Drawing.Point(65, 12);
             this.groupBox1.Name = "groupBox1";
@@ -57,6 +61,31 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Consultar con parametros ";
+            // 
+            // cboFiltro
+            // 
+            this.cboFiltro.FormattingEnabled = true;
+            this.cboFiltro.Items.AddRange(new object[] {
+            "",
+            "idReunion",
+            "fechaReunion",
+            "horaInicio",
+            "horaFin",
+            "motivoReunion",
+            "lugarReunion",
+            "idInvestigadores"});
+            this.cboFiltro.Location = new System.Drawing.Point(22, 56);
+            this.cboFiltro.Name = "cboFiltro";
+            this.cboFiltro.Size = new System.Drawing.Size(206, 24);
+            this.cboFiltro.TabIndex = 4;
+            this.cboFiltro.SelectedIndexChanged += new System.EventHandler(this.cboFiltro_SelectedIndexChanged);
+            // 
+            // panelFiltro
+            // 
+            this.panelFiltro.Location = new System.Drawing.Point(234, 46);
+            this.panelFiltro.Name = "panelFiltro";
+            this.panelFiltro.Size = new System.Drawing.Size(373, 50);
+            this.panelFiltro.TabIndex = 3;
             // 
             // btn_Consultar_con_parametros
             // 
@@ -125,5 +154,7 @@
         private System.Windows.Forms.Button btnAtras;
         private System.Windows.Forms.Button btnAgregarReunión;
         private System.Windows.Forms.Button btnVerReunion;
+        private System.Windows.Forms.ComboBox cboFiltro;
+        private System.Windows.Forms.Panel panelFiltro;
     }
 }
