@@ -95,6 +95,7 @@
             this.btn_Consultar_con_parametros.TabIndex = 2;
             this.btn_Consultar_con_parametros.Text = "Consultar ";
             this.btn_Consultar_con_parametros.UseVisualStyleBackColor = true;
+            this.btn_Consultar_con_parametros.Click += new System.EventHandler(this.btn_Consultar_con_parametros_Click);
             // 
             // btnAtras
             // 

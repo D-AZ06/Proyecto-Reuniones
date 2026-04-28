@@ -274,7 +274,7 @@
             // 
             // dtpFechaReunion
             // 
-            this.dtpFechaReunion.CustomFormat = "dd/MM/yyyy";
+            this.dtpFechaReunion.CustomFormat = "yyyy-MM-dd";
             this.dtpFechaReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpFechaReunion.Location = new System.Drawing.Point(291, 108);
             this.dtpFechaReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);

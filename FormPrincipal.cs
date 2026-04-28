@@ -28,16 +28,28 @@ namespace Proyecto_Reuniones
 
         private void ConfigurarInterfaz()
         {
-            MessageBox.Show($"Bienvenido, {datosUsuario.Nombre} ({datosUsuario.Rol})", "Bienvenida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Bienvenido, {datosUsuario.Nombre} ({datosUsuario.Rol})", "Bienvenida",
+        MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            if (datosUsuario.Rol == "Líder")
-            {
+            // Cargar ComboBox con texto visible y valor interno separados
+            var opciones = new List<KeyValuePair<string, string>>();
+            opciones.Add(new KeyValuePair<string, string>("", ""));
+            opciones.Add(new KeyValuePair<string, string>("ID reunión", "idReunion"));
+            opciones.Add(new KeyValuePair<string, string>("Fecha", "fechaReunion"));
+            opciones.Add(new KeyValuePair<string, string>("Hora inicio", "horaInicio"));
+            opciones.Add(new KeyValuePair<string, string>("Hora fin", "horaFin"));
+            opciones.Add(new KeyValuePair<string, string>("Motivo", "motivoReunion"));
+            opciones.Add(new KeyValuePair<string, string>("Lugar", "lugarReunion"));
+            opciones.Add(new KeyValuePair<string, string>("Nombre investigador", "idInvestigadores"));
 
-            }
-            else if (datosUsuario.Rol == "Investigador")
+            cboFiltro.DataSource = opciones;
+            cboFiltro.DisplayMember = "Key";   // lo que ve el usuario
+            cboFiltro.ValueMember = "Value"; // lo que usa el código
+
+            if (datosUsuario.Rol == "Investigador")
             {
-                btnAgregarReunión.Enabled = false; // Deshabilitamos el botón de agregar reunión para los investigadores
-                btnAgregarReunión.Visible = false; // Ocultamos el botón de agregar reunión para los investigadores
+                btnAgregarReunión.Enabled = false;
+                btnAgregarReunión.Visible = false;
             }
         }
 
@@ -58,147 +70,160 @@ namespace Proyecto_Reuniones
             formAgregar.ShowDialog();
         }
 
+        // ─────────────────────────────────────────────────────────────────
+        // MÉTODO COMPARTIDO: trae reuniones filtradas por rol + sus usuarios
+        // ─────────────────────────────────────────────────────────────────
+        private async Task<(List<BsonDocument> reuniones, Dictionary<int, string> nombrePorId)>
+            ObtenerReunionesYUsuarios(FilterDefinition<BsonDocument> filtroPrincipal)
+        {
+            var db = Conexion.ObtenerBaseDatos();
+            var colReuniones = db.GetCollection<BsonDocument>("Reuniones");
+            var colUsuarios = db.GetCollection<BsonDocument>("Usuarios");
+
+            var reuniones = await colReuniones.Find(filtroPrincipal).ToListAsync();
+
+            var ids = new HashSet<int>();
+
+            foreach (var r in reuniones)
+            {
+                ids.Add(r["idLider"].ToInt32());
+
+                if (r.Contains("idInvestigadores"))
+                {
+                    foreach (var id in r["idInvestigadores"].AsBsonArray)
+                    {
+                        ids.Add(id.ToInt32());
+                    }
+                }
+            }
+
+            var nombrePorId = new Dictionary<int, string>();
+
+            if (ids.Count > 0)
+            {
+                var filtroUsuarios = Builders<BsonDocument>.Filter.In("idUsuario", ids);
+                var usuarios = await colUsuarios.Find(filtroUsuarios).ToListAsync();
+
+                foreach (var u in usuarios)
+                {
+                    int idU = u["idUsuario"].ToInt32();
+                    string nom = u["nombreUsuario"].AsString;
+                    nombrePorId[idU] = nom;
+                }
+            }
+
+            return (reuniones, nombrePorId);
+        }
+
+        // ─────────────────────────────────────────────────────────────────
+        // MÉTODO COMPARTIDO: convierte lista de docs en DataTable
+        // ─────────────────────────────────────────────────────────────────
+        private DataTable ConstruirTabla(List<BsonDocument> reuniones, Dictionary<int, string> nombrePorId)
+        {
+            var tabla = new DataTable();
+            tabla.Columns.Add("Cód.", typeof(int));
+            tabla.Columns.Add("Fecha", typeof(string));
+            tabla.Columns.Add("Inicio", typeof(string));
+            tabla.Columns.Add("Fin", typeof(string));
+            tabla.Columns.Add("Motivo", typeof(string));
+            tabla.Columns.Add("Lugar", typeof(string));
+            tabla.Columns.Add("Líder", typeof(string));
+            tabla.Columns.Add("Asistentes", typeof(string));
+
+            foreach (var r in reuniones)
+            {
+                int idLider = r["idLider"].ToInt32();
+                string nombreLider;
+
+                if (nombrePorId.ContainsKey(idLider))
+                {
+                    nombreLider = nombrePorId[idLider];
+                }
+                else
+                {
+                    nombreLider = "ID " + idLider;
+                }
+
+                string asistentes = "";
+
+                if (r.Contains("idInvestigadores"))
+                {
+                    foreach (var x in r["idInvestigadores"].AsBsonArray)
+                    {
+                        int id = x.ToInt32();
+                        string nombre;
+
+                        if (nombrePorId.ContainsKey(id))
+                        {
+                            nombre = nombrePorId[id];
+                        }
+                        else
+                        {
+                            nombre = "ID " + id;
+                        }
+
+                        if (asistentes != "")
+                        {
+                            asistentes += Environment.NewLine;
+                        }
+
+                        asistentes += "• " + nombre;
+                    }
+                }
+
+                tabla.Rows.Add(
+                    r["idReunion"].ToInt32(),
+                    r["fechaReunion"].AsString,
+                    r["horaInicio"].AsString,
+                    r["horaFin"].AsString,
+                    r["motivoReunion"].AsString,
+                    r["lugarReunion"].AsString,
+                    nombreLider,
+                    asistentes
+                );
+            }
+
+            return tabla;
+        }
+
         private async void btnVerReunion_Click(object sender, EventArgs e)
         {
             try
             {
-                var db = Conexion.ObtenerBaseDatos(); // Obtener la base de datos
-                var colReuniones = db.GetCollection<BsonDocument>("Reuniones"); // Obtener la colección de reuniones
-                var colUsuarios = db.GetCollection<BsonDocument>("Usuarios"); // Obtener la colección de usuarios
-
-                int idUsuario = Convert.ToInt32(datosUsuario.IdUsuario); // Convertir el ID del usuario a entero para compararlo con los IDs en la base de datos
-
-                // FILTRO según rol
-                FilterDefinition<BsonDocument> filtro;
+                int idUsuario = Convert.ToInt32(datosUsuario.IdUsuario);
+                FilterDefinition<BsonDocument> filtroPorRol;
 
                 if (datosUsuario.Rol == "Líder")
                 {
-                    filtro = Builders<BsonDocument>.Filter.Eq("idLider", idUsuario); // Si es Líder, buscamos coincidencia exacta en el campo idLider
+                    filtroPorRol = Builders<BsonDocument>.Filter.Eq("idLider", idUsuario);
                 }
                 else
                 {
-                    filtro = Builders<BsonDocument>.Filter.AnyEq("idInvestigadores", idUsuario); // Si no es Líder, buscamos si el idUsuario está dentro de la lista de investigadores
+                    filtroPorRol = Builders<BsonDocument>.Filter.AnyEq("idInvestigadores", idUsuario);
                 }
 
-                var reuniones = await colReuniones.Find(filtro).ToListAsync(); // Obtener las reuniones que corresponden al filtro
+                var (reuniones, nombrePorId) = await ObtenerReunionesYUsuarios(filtroPorRol);
 
-                // Verificar si se encontraron reuniones antes de intentar procesarlas
                 if (reuniones.Count == 0)
                 {
                     dataGridView1.DataSource = null;
 
-                    string mensajeAMostrar; // 1. Declaramos una variable para el mensaje
+                    string mensaje;
 
                     if (datosUsuario.Rol == "Líder")
                     {
-                        mensajeAMostrar = "No hay reuniones en tu semillero.";
+                        mensaje = "No hay reuniones en tu semillero.";
                     }
                     else
                     {
-                        mensajeAMostrar = "No estás en ninguna reunión.";
+                        mensaje = "No estás en ninguna reunión.";
                     }
 
-                    // 3. Pasamos la variable al MessageBox
-                    MessageBox.Show(mensajeAMostrar, "Sin resultados", MessageBoxButtons.OK, MessageBoxIcon.Information
-                    );
-
+                    MessageBox.Show(mensaje, "Sin resultados", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
-                // Recolectar IDs necesarios (lider + investigadores)
-                var ids = new HashSet<int>();
-
-                foreach (var r in reuniones) // Agregar ID del líder
-                {
-                    ids.Add(r["idLider"].ToInt32()); // Agregar IDs de investigadores
-
-                    // Verificar si el campo "idInvestigadores" existe antes de intentar acceder a él
-                    if (r.Contains("idInvestigadores"))
-                    {
-                        foreach (var id in r["idInvestigadores"].AsBsonArray) // Agregar cada ID de investigador a la colección de IDs
-                        {
-                            ids.Add(id.ToInt32()); // Agregar el ID del investigador al HashSet (esto automáticamente evita duplicados)
-                        }    
-                    }  
-                }
-
-                // Traer usuarios una sola vez
-                var filtroUsuarios = Builders<BsonDocument>.Filter.In("idUsuario", ids); // Filtrar usuarios por los IDs recolectados
-                var usuarios = await colUsuarios.Find(filtroUsuarios).ToListAsync(); // Obtener los usuarios que corresponden al filtro
-
-                // Crear diccionario para mapear ID de usuario a nombre
-                var nombrePorId = usuarios.ToDictionary(
-                    u => u["idUsuario"].ToInt32(),
-                    u => u["nombreUsuario"].AsString
-                );
-
-                // Crear tabla
-                var tabla = new DataTable();
-                tabla.Columns.Add("Cód.", typeof(int));
-                tabla.Columns.Add("Fecha", typeof(string));
-                tabla.Columns.Add("Inicio", typeof(string));
-                tabla.Columns.Add("Fin", typeof(string));
-                tabla.Columns.Add("Motivo", typeof(string));
-                tabla.Columns.Add("Lugar", typeof(string));
-                tabla.Columns.Add("Líder", typeof(string));
-                tabla.Columns.Add("Asistentes", typeof(string));
-
-                foreach (var r in reuniones) // Llenar la tabla con los datos de las reuniones
-                {
-                    // 1. Obtenemos el ID del líder desde el documento BSON
-                    int idLider = r["idLider"].ToInt32();
-                    string nombreLider;
-
-                    // 2. Verificamos si ese ID existe en nuestro "diccionario" de nombres
-                    if (nombrePorId.ContainsKey(idLider))
-                    {
-                        nombreLider = nombrePorId[idLider]; // Si existe, asignamos el nombre correspondiente
-                    }
-                    else
-                    {
-                        nombreLider = "ID " + idLider; // Si no existe, creamos un texto genérico con el ID para no dejar el campo vacío
-                    }
-
-                    string asistentes = ""; // Inicializar variable para asistentes
-
-                    if (r.Contains("idInvestigadores")) // Verificar si el campo "idInvestigadores" existe antes de intentar acceder a él
-                    {
-                        // Crear una lista de nombres de asistentes usando el diccionario, o mostrar el ID si no se encuentra
-                        asistentes = string.Join(Environment.NewLine,
-                            r["idInvestigadores"].AsBsonArray.Select(x =>
-                            {
-                                int id = x.ToInt32();
-                                string nombre;
-
-                                // 1. Decidimos qué nombre asignar
-                                if (nombrePorId.ContainsKey(id))
-                                {
-                                    
-                                    nombre = nombrePorId[id]; // Si el ID está en el diccionario, usamos el nombre real
-                                }
-                                else
-                                {
-                                    nombre = "ID " + id; // Si no está, usamos el texto de respaldo con el ID
-                                }
-
-                                return "• " + nombre; // 2. Retornamos el nombre con el formato de viñeta
-                            }));
-                    }
-
-                    // Agregar la fila a la tabla
-                    tabla.Rows.Add(
-                        r["idReunion"].ToInt32(),
-                        r["fechaReunion"].AsString,
-                        r["horaInicio"].AsString,
-                        r["horaFin"].AsString,
-                        r["motivoReunion"].AsString,
-                        r["lugarReunion"].AsString,
-                        nombreLider,
-                        asistentes
-                    );
-                }
-
-                dataGridView1.DataSource = tabla;
+                dataGridView1.DataSource = ConstruirTabla(reuniones, nombrePorId);
                 DisenarGrid();
             }
             catch (Exception ex)
@@ -220,33 +245,37 @@ namespace Proyecto_Reuniones
         private void cboFiltro_SelectedIndexChanged(object sender, EventArgs e)
         {
             panelFiltro.Controls.Clear();
+            controlActual = null;
 
-            if (cboFiltro.Text == "idReunion" || cboFiltro.Text == "motivoReunion" || cboFiltro.Text == "lugarReunion" || cboFiltro.Text == "idInvestigadores")
+            string campo = cboFiltro.SelectedValue.ToString();
+
+            if (campo == "idReunion" || campo == "motivoReunion" ||
+                campo == "lugarReunion" || campo == "idInvestigadores")
             {
                 TextBox txt = new TextBox();
                 controlActual = txt;
             }
-            else if (cboFiltro.Text == "fechaReunion")
+            else if (campo == "fechaReunion")
             {
                 DateTimePicker dtp = new DateTimePicker();
-                ((DateTimePicker)controlActual).Format = DateTimePickerFormat.Short;
+                dtp.Format = DateTimePickerFormat.Short;
                 controlActual = dtp;
             }
-            else if (cboFiltro.Text == "horaInicio" || cboFiltro.Text == "horaFin")
+            else if (campo == "horaInicio" || campo == "horaFin")
             {
                 DateTimePicker dtp = new DateTimePicker();
                 dtp.Format = DateTimePickerFormat.Custom;
-                dtp.CustomFormat = "HH:mm tt"; // ← sin segundos
+                dtp.CustomFormat = "HH:mm";
                 dtp.ShowUpDown = true;
                 controlActual = dtp;
             }
             else
             {
-                return; // Si no se selecciona un filtro válido, no hacemos nada
+                return;
             }
 
             controlActual.Dock = DockStyle.Fill;
-            panelFiltro.Controls.Add(controlActual); // 2. meto el nuevo
+            panelFiltro.Controls.Add(controlActual);
         }
 
         private string ObtenerValorDelControl()
@@ -260,15 +289,116 @@ namespace Proyecto_Reuniones
             {
                 if (dtp.Format == DateTimePickerFormat.Short)
                 {
-                    return dtp.Value.ToString("dd-MM-yyyy"); // fecha
+                    return dtp.Value.ToString("yyyy-MM-dd"); // fecha
                 }
 
                 else
                 {
-                    return dtp.Value.ToString("HH:mm tt"); // hora
+                    return dtp.Value.ToString("HH:mm"); // hora
                 } 
             }
             return "";
+        }
+
+        private async void btn_Consultar_con_parametros_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Validar selección del ComboBox (posición 0 = vacío)
+                if (cboFiltro.SelectedIndex <= 0)
+                {
+                    MessageBox.Show("Selecciona un campo para filtrar.", "Aviso",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string valorFiltro = ObtenerValorDelControl().Trim();
+
+                if (string.IsNullOrEmpty(valorFiltro))
+                {
+                    MessageBox.Show("Ingresa un valor para buscar.", "Aviso",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                int idUsuario = Convert.ToInt32(datosUsuario.IdUsuario);
+                FilterDefinition<BsonDocument> filtroPorRol;
+
+                if (datosUsuario.Rol == "Líder")
+                {
+                    filtroPorRol = Builders<BsonDocument>.Filter.Eq("idLider", idUsuario);
+                }
+                else
+                {
+                    filtroPorRol = Builders<BsonDocument>.Filter.AnyEq("idInvestigadores", idUsuario);
+                }
+
+                string campo = cboFiltro.SelectedValue.ToString();
+                FilterDefinition<BsonDocument> filtroCampo;
+
+                if (campo == "idReunion")
+                {
+                    if (!int.TryParse(valorFiltro, out int codReunion))
+                    {
+                        MessageBox.Show("El código de reunión debe ser un número.", "Aviso",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    filtroCampo = Builders<BsonDocument>.Filter.Eq("idReunion", codReunion);
+                }
+                else if (campo == "idInvestigadores")
+                {
+                    // El usuario escribe un nombre, buscamos su ID en Usuarios
+                    var db = Conexion.ObtenerBaseDatos();
+                    var colUsuarios = db.GetCollection<BsonDocument>("Usuarios");
+
+                    var filtroNombre = Builders<BsonDocument>.Filter.Regex("nombreUsuario", new BsonRegularExpression(valorFiltro, "i"));
+                    var usuariosEncontrados = await colUsuarios.Find(filtroNombre).ToListAsync();
+
+                    if (usuariosEncontrados.Count == 0)
+                    {
+                        MessageBox.Show("No se encontró ningún investigador con ese nombre.", "Sin resultados",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    var idsEncontrados = new List<int>();
+
+                    foreach (var u in usuariosEncontrados)
+                    {
+                        idsEncontrados.Add(u["idUsuario"].ToInt32());
+                    }
+
+                    filtroCampo = Builders<BsonDocument>.Filter.AnyIn("idInvestigadores", idsEncontrados);
+                }
+                else
+                {
+                    // fechaReunion, horaInicio, horaFin, motivoReunion, lugarReunion
+                    // Búsqueda parcial sin distinguir mayúsculas
+                    filtroCampo = Builders<BsonDocument>.Filter.Regex(campo, new BsonRegularExpression(valorFiltro, "i"));
+                }
+
+                // Combinar filtro de rol + filtro del parámetro
+                var filtroFinal = Builders<BsonDocument>.Filter.And(filtroPorRol, filtroCampo);
+
+                var (reuniones, nombrePorId) = await ObtenerReunionesYUsuarios(filtroFinal);
+
+                if (reuniones.Count == 0)
+                {
+                    dataGridView1.DataSource = null;
+                    MessageBox.Show("No se encontraron reuniones con ese criterio.", "Sin resultados",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                dataGridView1.DataSource = ConstruirTabla(reuniones, nombrePorId);
+                DisenarGrid();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
