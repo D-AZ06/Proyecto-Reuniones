@@ -36,11 +36,13 @@
             this.txtContraseña = new System.Windows.Forms.TextBox();
             this.txtCorreo = new System.Windows.Forms.TextBox();
             this.btnSalir = new System.Windows.Forms.Button();
+            this.lblMensajeCorreo = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblMensajeCorreo);
             this.groupBox1.Controls.Add(this.lblConexion);
             this.groupBox1.Controls.Add(this.btnIniciarSesión);
             this.groupBox1.Controls.Add(this.label2);
@@ -105,7 +107,7 @@
             this.txtCorreo.Name = "txtCorreo";
             this.txtCorreo.Size = new System.Drawing.Size(215, 22);
             this.txtCorreo.TabIndex = 0;
-            this.txtCorreo.UseWaitCursor = true;
+            this.txtCorreo.TextChanged += new System.EventHandler(this.txtCorreo_TextChanged);
             // 
             // btnSalir
             // 
@@ -116,6 +118,16 @@
             this.btnSalir.Text = "Salir del Programa";
             this.btnSalir.UseVisualStyleBackColor = true;
             this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
+            // 
+            // lblMensajeCorreo
+            // 
+            this.lblMensajeCorreo.AutoSize = true;
+            this.lblMensajeCorreo.ForeColor = System.Drawing.Color.Red;
+            this.lblMensajeCorreo.Location = new System.Drawing.Point(428, 206);
+            this.lblMensajeCorreo.Name = "lblMensajeCorreo";
+            this.lblMensajeCorreo.Size = new System.Drawing.Size(10, 16);
+            this.lblMensajeCorreo.TabIndex = 6;
+            this.lblMensajeCorreo.Text = " ";
             // 
             // Form1
             // 
@@ -144,6 +156,7 @@
         private System.Windows.Forms.TextBox txtCorreo;
         private System.Windows.Forms.Label lblConexion;
         private System.Windows.Forms.Button btnSalir;
+        private System.Windows.Forms.Label lblMensajeCorreo;
     }
 }
 

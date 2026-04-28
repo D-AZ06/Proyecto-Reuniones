@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using System.Text.RegularExpressions;
 
 namespace Proyecto_Reuniones
 {
@@ -99,6 +100,30 @@ namespace Proyecto_Reuniones
             if (result == DialogResult.Yes)
             {
                 Application.Exit();
+            }
+        }
+        private bool EsCorreoValido(string correo)
+        {
+            string patron = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(correo, patron);
+        }
+
+        private void txtCorreo_TextChanged(object sender, EventArgs e)
+        {
+            bool valido = EsCorreoValido(txtCorreo.Text);
+
+            btnIniciarSesión.Enabled = valido;
+            if (valido)
+            {
+                btnIniciarSesión.Enabled = true;
+                txtCorreo.BackColor = Color.White;
+                lblMensajeCorreo.Text = "";
+            }
+            else
+            {
+                btnIniciarSesión.Enabled = false;
+                txtCorreo.BackColor = Color.MistyRose;
+                lblMensajeCorreo.Text = "Correo no válido";
             }
         }
     }
