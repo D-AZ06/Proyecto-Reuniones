@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPrincipal));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cboFiltro = new System.Windows.Forms.ComboBox();
@@ -36,6 +37,7 @@
             this.btnAtras = new System.Windows.Forms.Button();
             this.btnAgregarReunión = new System.Windows.Forms.Button();
             this.btnVerReunion = new System.Windows.Forms.Button();
+            this.cboEstadoReunion = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -64,6 +66,8 @@
             // 
             // cboFiltro
             // 
+            this.cboFiltro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboFiltro.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cboFiltro.FormattingEnabled = true;
             this.cboFiltro.Items.AddRange(new object[] {
             "",
@@ -82,9 +86,9 @@
             // 
             // panelFiltro
             // 
-            this.panelFiltro.Location = new System.Drawing.Point(234, 46);
+            this.panelFiltro.Location = new System.Drawing.Point(271, 56);
             this.panelFiltro.Name = "panelFiltro";
-            this.panelFiltro.Size = new System.Drawing.Size(373, 50);
+            this.panelFiltro.Size = new System.Drawing.Size(204, 24);
             this.panelFiltro.TabIndex = 3;
             // 
             // btn_Consultar_con_parametros
@@ -127,19 +131,34 @@
             this.btnVerReunion.UseVisualStyleBackColor = true;
             this.btnVerReunion.Click += new System.EventHandler(this.btnVerReunion_Click);
             // 
+            // cboEstadoReunion
+            // 
+            this.cboEstadoReunion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboEstadoReunion.FormattingEnabled = true;
+            this.cboEstadoReunion.Items.AddRange(new object[] {
+            "Todas",
+            "Programadas",
+            "En Ejecución",
+            "Finalizadas"});
+            this.cboEstadoReunion.Location = new System.Drawing.Point(933, 369);
+            this.cboEstadoReunion.Name = "cboEstadoReunion";
+            this.cboEstadoReunion.Size = new System.Drawing.Size(121, 24);
+            this.cboEstadoReunion.TabIndex = 6;
+            // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1512, 791);
             this.ControlBox = false;
+            this.Controls.Add(this.cboEstadoReunion);
             this.Controls.Add(this.btnVerReunion);
             this.Controls.Add(this.btnAgregarReunión);
             this.Controls.Add(this.btnAtras);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.dataGridView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormPrincipal";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -157,5 +176,6 @@
         private System.Windows.Forms.Button btnVerReunion;
         private System.Windows.Forms.ComboBox cboFiltro;
         private System.Windows.Forms.Panel panelFiltro;
+        private System.Windows.Forms.ComboBox cboEstadoReunion;
     }
 }
