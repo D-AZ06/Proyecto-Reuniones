@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblMensajeCorreo = new System.Windows.Forms.Label();
             this.lblConexion = new System.Windows.Forms.Label();
             this.btnIniciarSesión = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -36,7 +38,6 @@
             this.txtContraseña = new System.Windows.Forms.TextBox();
             this.txtCorreo = new System.Windows.Forms.TextBox();
             this.btnSalir = new System.Windows.Forms.Button();
-            this.lblMensajeCorreo = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,10 +52,20 @@
             this.groupBox1.Controls.Add(this.txtCorreo);
             this.groupBox1.Location = new System.Drawing.Point(338, 74);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(893, 516);
+            this.groupBox1.Size = new System.Drawing.Size(893, 513);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Iniciar Sesión";
+            // 
+            // lblMensajeCorreo
+            // 
+            this.lblMensajeCorreo.AutoSize = true;
+            this.lblMensajeCorreo.ForeColor = System.Drawing.Color.Red;
+            this.lblMensajeCorreo.Location = new System.Drawing.Point(428, 206);
+            this.lblMensajeCorreo.Name = "lblMensajeCorreo";
+            this.lblMensajeCorreo.Size = new System.Drawing.Size(10, 16);
+            this.lblMensajeCorreo.TabIndex = 6;
+            this.lblMensajeCorreo.Text = " ";
             // 
             // lblConexion
             // 
@@ -119,16 +130,6 @@
             this.btnSalir.UseVisualStyleBackColor = true;
             this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
             // 
-            // lblMensajeCorreo
-            // 
-            this.lblMensajeCorreo.AutoSize = true;
-            this.lblMensajeCorreo.ForeColor = System.Drawing.Color.Red;
-            this.lblMensajeCorreo.Location = new System.Drawing.Point(428, 206);
-            this.lblMensajeCorreo.Name = "lblMensajeCorreo";
-            this.lblMensajeCorreo.Size = new System.Drawing.Size(10, 16);
-            this.lblMensajeCorreo.TabIndex = 6;
-            this.lblMensajeCorreo.Text = " ";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -137,8 +138,8 @@
             this.ControlBox = false;
             this.Controls.Add(this.btnSalir);
             this.Controls.Add(this.groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
