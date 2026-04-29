@@ -38,6 +38,7 @@
             this.btnAgregarReunión = new System.Windows.Forms.Button();
             this.btnVerReunion = new System.Windows.Forms.Button();
             this.cboEstadoReunion = new System.Windows.Forms.ComboBox();
+            this.lblFechaHora = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -145,12 +146,22 @@
             this.cboEstadoReunion.Size = new System.Drawing.Size(121, 24);
             this.cboEstadoReunion.TabIndex = 6;
             // 
+            // lblFechaHora
+            // 
+            this.lblFechaHora.AutoSize = true;
+            this.lblFechaHora.Location = new System.Drawing.Point(981, 464);
+            this.lblFechaHora.Name = "lblFechaHora";
+            this.lblFechaHora.Size = new System.Drawing.Size(149, 16);
+            this.lblFechaHora.TabIndex = 7;
+            this.lblFechaHora.Text = "dd/mm/yyyy - hh/mm/ss";
+            // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1512, 791);
             this.ControlBox = false;
+            this.Controls.Add(this.lblFechaHora);
             this.Controls.Add(this.cboEstadoReunion);
             this.Controls.Add(this.btnVerReunion);
             this.Controls.Add(this.btnAgregarReunión);
@@ -163,6 +174,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -177,5 +189,6 @@
         private System.Windows.Forms.ComboBox cboFiltro;
         private System.Windows.Forms.Panel panelFiltro;
         private System.Windows.Forms.ComboBox cboEstadoReunion;
+        private System.Windows.Forms.Label lblFechaHora;
     }
 }

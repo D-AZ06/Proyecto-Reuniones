@@ -1,4 +1,1 @@
-Instrucciones
-
-1. renombran este archivo a LlaveAcceso
-2. borran todo aquí y pegan la dirección de la base de datos
+mongodb://admin:<db_password>@ac-vrzgkul-shard-00-00.ubwkmd8.mongodb.net:27017,ac-vrzgkul-shard-00-01.ubwkmd8.mongodb.net:27017,ac-vrzgkul-shard-00-02.ubwkmd8.mongodb.net:27017/?ssl=true&replicaSet=atlas-tadnmm-shard-0&authSource=admin&appName=ProyectoReunion
