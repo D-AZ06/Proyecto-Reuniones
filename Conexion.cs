@@ -12,7 +12,6 @@ namespace Proyecto_Reuniones
 {
     internal class Conexion
     {
-        
         public static IMongoDatabase ObtenerBaseDatos()
         {
             try
