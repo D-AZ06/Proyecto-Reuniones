@@ -51,11 +51,13 @@
             this.txtIdReunion = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCancelar = new System.Windows.Forms.Button();
+            this.btnAgregarReunion = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnAgregarReunion);
             this.groupBox1.Controls.Add(this.btnAgregar);
             this.groupBox1.Controls.Add(this.dtpHoraFinalReunion);
             this.groupBox1.Controls.Add(this.dtpHoraInicioReunion);
@@ -77,39 +79,31 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtIdReunion);
             this.groupBox1.Controls.Add(this.label1);
-<<<<<<< HEAD
-            this.groupBox1.Location = new System.Drawing.Point(10, -20);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(709, 730);
-=======
             this.groupBox1.Location = new System.Drawing.Point(21, 30);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox1.Size = new System.Drawing.Size(777, 869);
->>>>>>> 569dd95 (30/04/2026 - Codigo refactorizado y ya sirve confirmar asistencia)
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Agregar Reunión";
             // 
             // btnAgregar
             // 
-            this.btnAgregar.Location = new System.Drawing.Point(486, 358);
+            this.btnAgregar.Location = new System.Drawing.Point(827, 860);
+            this.btnAgregar.Margin = new System.Windows.Forms.Padding(5);
             this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(87, 39);
-            this.btnAgregar.TabIndex = 26;
-            this.btnAgregar.Text = "Agregar Reunion";
+            this.btnAgregar.Size = new System.Drawing.Size(100, 28);
+            this.btnAgregar.TabIndex = 23;
+            this.btnAgregar.Text = "Agregar";
             this.btnAgregar.UseVisualStyleBackColor = true;
-            this.btnAgregar.Click += new System.EventHandler(this.button1_Click);
             // 
             // dtpHoraFinalReunion
             // 
             this.dtpHoraFinalReunion.CustomFormat = "HH:mm";
             this.dtpHoraFinalReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpHoraFinalReunion.Location = new System.Drawing.Point(291, 236);
-            this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4);
             this.dtpHoraFinalReunion.Name = "dtpHoraFinalReunion";
             this.dtpHoraFinalReunion.ShowUpDown = true;
             this.dtpHoraFinalReunion.Size = new System.Drawing.Size(65, 22);
@@ -120,48 +114,13 @@
             this.dtpHoraInicioReunion.CustomFormat = "HH:mm";
             this.dtpHoraInicioReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpHoraInicioReunion.Location = new System.Drawing.Point(291, 187);
-            this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4);
             this.dtpHoraInicioReunion.Name = "dtpHoraInicioReunion";
             this.dtpHoraInicioReunion.ShowUpDown = true;
             this.dtpHoraInicioReunion.Size = new System.Drawing.Size(65, 22);
             this.dtpHoraInicioReunion.TabIndex = 24;
             this.dtpHoraInicioReunion.Value = new System.DateTime(2026, 4, 29, 10, 48, 0, 0);
             // 
-<<<<<<< HEAD
-=======
-            // btnAgregar
-            // 
-            this.btnAgregar.Location = new System.Drawing.Point(827, 860);
-            this.btnAgregar.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-            this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(100, 28);
-            this.btnAgregar.TabIndex = 23;
-            this.btnAgregar.Text = "Agregar";
-            this.btnAgregar.UseVisualStyleBackColor = true;
-            this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
-            // 
-            // btnLimpiar
-            // 
-            this.btnLimpiar.Location = new System.Drawing.Point(363, 790);
-            this.btnLimpiar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnLimpiar.Name = "btnLimpiar";
-            this.btnLimpiar.Size = new System.Drawing.Size(99, 49);
-            this.btnLimpiar.TabIndex = 22;
-            this.btnLimpiar.Text = "Limpiar Campos";
-            this.btnLimpiar.UseVisualStyleBackColor = true;
-            // 
-            // btnGuardar
-            // 
-            this.btnGuardar.Location = new System.Drawing.Point(189, 790);
-            this.btnGuardar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(99, 49);
-            this.btnGuardar.TabIndex = 21;
-            this.btnGuardar.Text = "Guardar Reunión";
-            this.btnGuardar.UseVisualStyleBackColor = true;
-            this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
-            // 
->>>>>>> 569dd95 (30/04/2026 - Codigo refactorizado y ya sirve confirmar asistencia)
             // label10
             // 
             this.label10.AutoSize = true;
@@ -328,31 +287,30 @@
             // 
             // btnCancelar
             // 
-<<<<<<< HEAD
-            this.btnCancelar.Location = new System.Drawing.Point(629, 63);
-            this.btnCancelar.Margin = new System.Windows.Forms.Padding(2);
-            this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(66, 19);
-=======
             this.btnCancelar.Location = new System.Drawing.Point(852, 78);
             this.btnCancelar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(75, 23);
->>>>>>> 569dd95 (30/04/2026 - Codigo refactorizado y ya sirve confirmar asistencia)
             this.btnCancelar.TabIndex = 1;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
+            // btnAgregarReunion
+            // 
+            this.btnAgregarReunion.Location = new System.Drawing.Point(254, 748);
+            this.btnAgregarReunion.Name = "btnAgregarReunion";
+            this.btnAgregarReunion.Size = new System.Drawing.Size(102, 47);
+            this.btnAgregarReunion.TabIndex = 26;
+            this.btnAgregarReunion.Text = "Agregar Reunión";
+            this.btnAgregarReunion.UseVisualStyleBackColor = true;
+            this.btnAgregarReunion.Click += new System.EventHandler(this.btnAgregarReunion_Click);
+            // 
             // FormAgregar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-<<<<<<< HEAD
-            this.ClientSize = new System.Drawing.Size(719, 627);
-=======
             this.ClientSize = new System.Drawing.Size(956, 873);
->>>>>>> 569dd95 (30/04/2026 - Codigo refactorizado y ya sirve confirmar asistencia)
             this.ControlBox = false;
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.groupBox1);
@@ -390,5 +348,6 @@
         private System.Windows.Forms.DateTimePicker dtpHoraFinalReunion;
         private System.Windows.Forms.DateTimePicker dtpHoraInicioReunion;
         private System.Windows.Forms.Button btnAgregar;
+        private System.Windows.Forms.Button btnAgregarReunion;
     }
 }
