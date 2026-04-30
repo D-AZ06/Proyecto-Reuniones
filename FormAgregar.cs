@@ -248,6 +248,7 @@ namespace Proyecto_Reuniones
             cargandoFormulario = false;
         }
 
+<<<<<<< HEAD
         private void btnCancelar_Click(object sender, EventArgs e) {
             MessageBox.Show("¿Está seguro de que desea cancelar? Se perderán los datos ingresados.", "Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             this.Close();
@@ -325,6 +326,13 @@ namespace Proyecto_Reuniones
                     MessageBox.Show("Error al guardar: " + ex.Message);
                 }
             }
+=======
+        private void btnCancelar_Click(object sender, EventArgs e) => this.Close();
+
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+
+>>>>>>> 569dd95 (30/04/2026 - Codigo refactorizado y ya sirve confirmar asistencia)
         }
     }
 

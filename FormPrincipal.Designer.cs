@@ -41,6 +41,11 @@
             this.cboEstadoReunion = new System.Windows.Forms.ComboBox();
             this.lblFechaHora = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lblNombreYApellido = new System.Windows.Forms.Label();
+            this.btnConfirmarAsistencia = new System.Windows.Forms.Button();
+            this.cboAsistencia = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -94,7 +99,7 @@
             // 
             this.panelFiltro.Location = new System.Drawing.Point(271, 56);
             this.panelFiltro.Name = "panelFiltro";
-            this.panelFiltro.Size = new System.Drawing.Size(204, 24);
+            this.panelFiltro.Size = new System.Drawing.Size(204, 33);
             this.panelFiltro.TabIndex = 3;
             // 
             // btn_Consultar_con_parametros
@@ -166,12 +171,63 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // lblNombreYApellido
+            // 
+            this.lblNombreYApellido.AutoSize = true;
+            this.lblNombreYApellido.Location = new System.Drawing.Point(1000, 548);
+            this.lblNombreYApellido.Name = "lblNombreYApellido";
+            this.lblNombreYApellido.Size = new System.Drawing.Size(109, 16);
+            this.lblNombreYApellido.TabIndex = 8;
+            this.lblNombreYApellido.Text = "Nombre Apellido";
+            // 
+            // btnConfirmarAsistencia
+            // 
+            this.btnConfirmarAsistencia.Location = new System.Drawing.Point(990, 638);
+            this.btnConfirmarAsistencia.Name = "btnConfirmarAsistencia";
+            this.btnConfirmarAsistencia.Size = new System.Drawing.Size(91, 54);
+            this.btnConfirmarAsistencia.TabIndex = 9;
+            this.btnConfirmarAsistencia.Text = "Confirmar Asistencia";
+            this.btnConfirmarAsistencia.UseVisualStyleBackColor = true;
+            this.btnConfirmarAsistencia.Click += new System.EventHandler(this.btnConfirmarAsistencia_Click);
+            // 
+            // cboAsistencia
+            // 
+            this.cboAsistencia.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboAsistencia.FormattingEnabled = true;
+            this.cboAsistencia.Location = new System.Drawing.Point(933, 423);
+            this.cboAsistencia.Name = "cboAsistencia";
+            this.cboAsistencia.Size = new System.Drawing.Size(121, 24);
+            this.cboAsistencia.TabIndex = 10;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(1065, 377);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(103, 16);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Estado Reunión";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(1065, 426);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(129, 16);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Confirmar Asistencia";
+            // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1512, 791);
             this.ControlBox = false;
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cboAsistencia);
+            this.Controls.Add(this.btnConfirmarAsistencia);
+            this.Controls.Add(this.lblNombreYApellido);
             this.Controls.Add(this.lblFechaHora);
             this.Controls.Add(this.cboEstadoReunion);
             this.Controls.Add(this.btnVerReunion);
@@ -203,5 +259,10 @@
         private System.Windows.Forms.ComboBox cboEstadoReunion;
         private System.Windows.Forms.Label lblFechaHora;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label lblNombreYApellido;
+        private System.Windows.Forms.Button btnConfirmarAsistencia;
+        private System.Windows.Forms.ComboBox cboAsistencia;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
