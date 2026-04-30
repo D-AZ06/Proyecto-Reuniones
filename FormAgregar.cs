@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,11 +19,22 @@ namespace Proyecto_Reuniones
 
         private DateTime valorAnteriorInicio;
         private DateTime valorAnteriorFin;
+        
 
         public FormAgregar(DatosUsuario datosRecibidos)
         {
-            ConfigurarConexion();
+            
             InitializeComponent();
+
+            // Llamada directa al método estático de tu clase Conexion
+            var database = Conexion.ObtenerBaseDatos();
+
+            if (database != null)
+            {
+                usuariosCol = database.GetCollection<BsonDocument>("Usuarios");
+                reunionesCol = database.GetCollection<BsonDocument>("Reuniones");
+            }
+
             this.usuarioLogueado = datosRecibidos;
 
             // Eventos
@@ -31,22 +43,19 @@ namespace Proyecto_Reuniones
             dtpHoraFinalReunion.ValueChanged += dtpHoraFinalReunion_ValueChanged;
         }
 
-        private void ConfigurarConexion()
-        {
-            try
-            {
-                string cadena = File.ReadAllText("LlaveAcceso.txt").Trim();
-                var cliente = new MongoClient(cadena);
-                var db = cliente.GetDatabase("BD-ProReuniones");
-                usuariosCol = db.GetCollection<BsonDocument>("Usuarios");
-                reunionesCol = db.GetCollection<BsonDocument>("Reuniones");
-            }
-            catch (Exception ex) { MessageBox.Show("Error de conexión: " + ex.Message); }
-        }
+        
 
         private void FormAgregar_Load(object sender, EventArgs e)
         {
             cargandoFormulario = true;
+            txtIdReunion.ReadOnly = true;
+            txtLiderResponsable.ReadOnly = true;
+            txtIdLider.ReadOnly = true;
+            txtIdSemillero.ReadOnly = true;
+
+         
+            txtIdReunion.BackColor = SystemColors.ControlLight;
+            txtLiderResponsable.BackColor = SystemColors.ControlLight;
             try
             {
                 DateTime ahora = DateTime.Now;
@@ -138,9 +147,9 @@ namespace Proyecto_Reuniones
         {
             if (cargandoFormulario) return;
 
-            if (dtpHoraFinalReunion.Value.TimeOfDay > new TimeSpan(17, 59, 0) || dtpHoraFinalReunion.Value.Hour >= 18)
+            if (dtpHoraFinalReunion.Value.TimeOfDay > new TimeSpan(18, 0, 0) || dtpHoraFinalReunion.Value.Hour >= 18)
             {
-                RestaurarValor(dtpHoraFinalReunion, valorAnteriorFin, "Máximo 05:59 p.m.");
+                RestaurarValor(dtpHoraFinalReunion, valorAnteriorFin, "Máximo 06:00 p.m.");
                 return;
             }
 
@@ -207,7 +216,7 @@ namespace Proyecto_Reuniones
                 var reuniones = reunionesCol.Find(filtro).ToList();
                 foreach (var doc in reuniones)
                 {
-                    var idsDB = doc["idInvestigadores"].AsBsonArray.Select(x => x.AsInt32);
+                    var idsDB = doc["idInvestigadores"].AsBsonArray.Select(x => x.AsBsonDocument["idInvestigador"].AsInt32);
                     if (ids.Any(id => idsDB.Contains(id)))
                     {
                         TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
@@ -224,33 +233,7 @@ namespace Proyecto_Reuniones
             return false;
         }
 
-        private void btnAgregar_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtMotivoReunion.Text) || clbListaInvestigadores.CheckedItems.Count == 0)
-            {
-                MessageBox.Show("Faltan datos."); return;
-            }
-            try
-            {
-                BsonArray invs = new BsonArray();
-                foreach (object item in clbListaInvestigadores.CheckedItems) invs.Add(((ItemInvestigador)item).Id);
-
-                var doc = new BsonDocument {
-                    { "idReunion", int.Parse(txtIdReunion.Text) },
-                    { "fechaReunion", dtpFechaReunion.Value.ToString("yyyy-MM-dd") },
-                    { "horaInicio", dtpHoraInicioReunion.Value.ToString("HH:mm") },
-                    { "horaFin", dtpHoraFinalReunion.Value.ToString("HH:mm") },
-                    { "motivoReunion", txtMotivoReunion.Text },
-                    { "lugarReunion", cboLugarReunion.Text },
-                    { "idLider", int.Parse(txtIdLider.Text) },
-                    { "idInvestigadores", invs }
-                };
-                reunionesCol.InsertOne(doc);
-                MessageBox.Show("Guardado.");
-                LimpiarFormulario();
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
-        }
+       
 
         private void LimpiarFormulario()
         {
@@ -265,7 +248,84 @@ namespace Proyecto_Reuniones
             cargandoFormulario = false;
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e) => this.Close();
+        private void btnCancelar_Click(object sender, EventArgs e) {
+            this.Close();
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // 1. Validar que el motivo no esté vacío
+            if (string.IsNullOrWhiteSpace(txtMotivoReunion.Text))
+            {
+                MessageBox.Show("Por favor, ingrese el motivo de la reunión.", "Datos Faltantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtMotivoReunion.Focus();
+                return;
+            }
+
+            // 2. Validar que se haya seleccionado un lugar
+            if (cboLugarReunion.SelectedIndex == -1 && string.IsNullOrWhiteSpace(cboLugarReunion.Text))
+            {
+                MessageBox.Show("Por favor, seleccione o ingrese un lugar para la reunión.", "Datos Faltantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboLugarReunion.Focus();
+                return;
+            }
+
+            // 3. Validar que haya al menos un investigador seleccionado
+            if (clbListaInvestigadores.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("Debe seleccionar al menos un investigador para la reunión.", "Sin Participantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtMotivoReunion.Text) || clbListaInvestigadores.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("Faltan datos."); return;
+            }
+            DialogResult resultado = MessageBox.Show("¿Está seguro de que desea agendar esta reunión?", "Confirmar Guardado", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (resultado == DialogResult.Yes)
+            {
+                try
+                {
+                    // Nueva lógica para crear el arreglo de objetos con asistencia
+                    BsonArray invs = new BsonArray();
+                    foreach (object item in clbListaInvestigadores.CheckedItems)
+                    {
+                        var investigador = (ItemInvestigador)item;
+
+                        // Creamos un sub-documento para cada investigador
+                        var convocadoDoc = new BsonDocument {
+                            { "idInvestigador", investigador.Id },
+                            { "asistencia", "pendiente" } // El campo que pediste
+                        };
+
+                        invs.Add(convocadoDoc);
+                    }
+
+                    // Crear el documento principal para MongoDB
+                    var doc = new BsonDocument {
+                        { "idReunion", int.Parse(txtIdReunion.Text) },
+                        { "fechaReunion", dtpFechaReunion.Value.ToString("yyyy-MM-dd") },
+                        { "horaInicio", dtpHoraInicioReunion.Value.ToString("HH:mm") },
+                        { "horaFin", dtpHoraFinalReunion.Value.ToString("HH:mm") },
+                        { "motivoReunion", txtMotivoReunion.Text.Trim() },
+                        { "lugarReunion", cboLugarReunion.Text.Trim() },
+                        { "idLider", int.Parse(txtIdLider.Text) },
+                        { "idInvestigadores", invs } // Aquí ahora se guarda el arreglo de objetos
+                    };
+
+                    reunionesCol.InsertOne(doc);
+                    // --- HASTA AQUÍ ---
+
+                    MessageBox.Show("La reunión ha sido guardada exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LimpiarFormulario();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al guardar: " + ex.Message);
+                }
+            }
+        }
     }
 
     public class ItemInvestigador

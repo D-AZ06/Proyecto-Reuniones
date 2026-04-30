@@ -28,13 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAgregar));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnAgregar = new System.Windows.Forms.Button();
             this.dtpHoraFinalReunion = new System.Windows.Forms.DateTimePicker();
             this.dtpHoraInicioReunion = new System.Windows.Forms.DateTimePicker();
-            this.btnAgregar = new System.Windows.Forms.Button();
-            this.btnLimpiar = new System.Windows.Forms.Button();
-            this.btnGuardar = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.clbListaInvestigadores = new System.Windows.Forms.CheckedListBox();
             this.txtIdSemillero = new System.Windows.Forms.TextBox();
@@ -59,11 +56,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnAgregar);
             this.groupBox1.Controls.Add(this.dtpHoraFinalReunion);
             this.groupBox1.Controls.Add(this.dtpHoraInicioReunion);
-            this.groupBox1.Controls.Add(this.btnAgregar);
-            this.groupBox1.Controls.Add(this.btnLimpiar);
-            this.groupBox1.Controls.Add(this.btnGuardar);
             this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.clbListaInvestigadores);
             this.groupBox1.Controls.Add(this.txtIdSemillero);
@@ -82,14 +77,24 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtIdReunion);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(16, 24);
+            this.groupBox1.Location = new System.Drawing.Point(10, -20);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(583, 706);
+            this.groupBox1.Size = new System.Drawing.Size(709, 730);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Agregar Reunión";
+            // 
+            // btnAgregar
+            // 
+            this.btnAgregar.Location = new System.Drawing.Point(486, 358);
+            this.btnAgregar.Name = "btnAgregar";
+            this.btnAgregar.Size = new System.Drawing.Size(87, 39);
+            this.btnAgregar.TabIndex = 26;
+            this.btnAgregar.Text = "Agregar Reunion";
+            this.btnAgregar.UseVisualStyleBackColor = true;
+            this.btnAgregar.Click += new System.EventHandler(this.button1_Click);
             // 
             // dtpHoraFinalReunion
             // 
@@ -111,37 +116,6 @@
             this.dtpHoraInicioReunion.Size = new System.Drawing.Size(50, 20);
             this.dtpHoraInicioReunion.TabIndex = 24;
             this.dtpHoraInicioReunion.Value = new System.DateTime(2026, 4, 29, 10, 48, 0, 0);
-            // 
-            // btnAgregar
-            // 
-            this.btnAgregar.Location = new System.Drawing.Point(620, 699);
-            this.btnAgregar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
-            this.btnAgregar.TabIndex = 23;
-            this.btnAgregar.Text = "Agregar";
-            this.btnAgregar.UseVisualStyleBackColor = true;
-            this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
-            // 
-            // btnLimpiar
-            // 
-            this.btnLimpiar.Location = new System.Drawing.Point(272, 642);
-            this.btnLimpiar.Margin = new System.Windows.Forms.Padding(2);
-            this.btnLimpiar.Name = "btnLimpiar";
-            this.btnLimpiar.Size = new System.Drawing.Size(74, 40);
-            this.btnLimpiar.TabIndex = 22;
-            this.btnLimpiar.Text = "Limpiar Campos";
-            this.btnLimpiar.UseVisualStyleBackColor = true;
-            // 
-            // btnGuardar
-            // 
-            this.btnGuardar.Location = new System.Drawing.Point(142, 642);
-            this.btnGuardar.Margin = new System.Windows.Forms.Padding(2);
-            this.btnGuardar.Name = "btnGuardar";
-            this.btnGuardar.Size = new System.Drawing.Size(74, 40);
-            this.btnGuardar.TabIndex = 21;
-            this.btnGuardar.Text = "Guardar Reunión";
-            this.btnGuardar.UseVisualStyleBackColor = true;
             // 
             // label10
             // 
@@ -332,7 +306,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(717, 627);
+            this.ClientSize = new System.Drawing.Size(719, 627);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.groupBox1);
@@ -366,11 +340,9 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckedListBox clbListaInvestigadores;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button btnLimpiar;
-        private System.Windows.Forms.Button btnGuardar;
         private System.Windows.Forms.Button btnCancelar;
-        private System.Windows.Forms.Button btnAgregar;
         private System.Windows.Forms.DateTimePicker dtpHoraFinalReunion;
         private System.Windows.Forms.DateTimePicker dtpHoraInicioReunion;
+        private System.Windows.Forms.Button btnAgregar;
     }
 }
