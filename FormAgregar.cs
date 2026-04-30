@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Proyecto_Reuniones
@@ -45,7 +46,7 @@ namespace Proyecto_Reuniones
 
         
 
-        private void FormAgregar_Load(object sender, EventArgs e)
+        private async void FormAgregar_Load(object sender, EventArgs e)
         {
             cargandoFormulario = true;
             txtIdReunion.ReadOnly = true;
@@ -71,9 +72,59 @@ namespace Proyecto_Reuniones
                     txtIdSemillero.Text = usuarioLogueado.IdSemillero.ToString();
                     GenerarIdReunion();
                     CargarInvestigadores(usuarioLogueado.IdSemillero);
+                    await CargarSugerenciasLugares();
                 }
             }
             finally { cargandoFormulario = false; }
+        }
+
+        private async Task CargarSugerenciasLugares()
+        {
+            try
+            {
+                var db = Conexion.ObtenerBaseDatos();
+                var colReuniones = db.GetCollection<BsonDocument>("Reuniones");
+                int idUsuario = usuarioLogueado.IdUsuario;
+
+                // Filtro: Si es Líder busca por idLider, si es Investigador busca dentro del array
+                FilterDefinition<BsonDocument> filtroPorRol;
+
+                if (usuarioLogueado.Rol == "Líder")
+                {
+                    filtroPorRol = Builders<BsonDocument>.Filter.Eq("idLider", idUsuario);
+                }
+                else
+                {
+                    filtroPorRol = Builders<BsonDocument>.Filter.ElemMatch<BsonValue>(
+                        "idInvestigadores",
+                        new BsonDocument("idInvestigador", idUsuario)
+                    );
+                }
+
+                // Obtenemos los lugares de las reuniones donde ha participado
+                var reunionesDelUsuario = await colReuniones.Find(filtroPorRol).ToListAsync();
+
+                var lugares = reunionesDelUsuario
+                    .Select(r => r["lugarReunion"].AsString)
+                    .Where(l => !string.IsNullOrWhiteSpace(l))
+                    .Distinct()
+                    .OrderBy(l => l)
+                    .ToList();
+
+                // Llenar el ComboBox en el hilo de la interfaz
+                this.Invoke(new Action(() => {
+                    cboLugarReunion.Items.Clear();
+                    foreach (var lugar in lugares)
+                    {
+                        cboLugarReunion.Items.Add(lugar);
+                    }
+                }));
+            }
+            catch (Exception ex)
+            {
+                // Silencioso o un log pequeño para no interrumpir al usuario
+                Console.WriteLine("Error cargando sugerencias: " + ex.Message);
+            }
         }
 
         // --- NUEVA LÓGICA DE CAMBIO DE FECHA ---
@@ -203,8 +254,12 @@ namespace Proyecto_Reuniones
             if (e.NewValue == CheckState.Checked)
             {
                 var inv = (ItemInvestigador)clbListaInvestigadores.Items[e.Index];
+
                 if (ExisteConflicto(dtpFechaReunion.Value.Date, dtpHoraInicioReunion.Value.TimeOfDay, dtpHoraFinalReunion.Value.TimeOfDay, new List<int> { inv.Id }))
+                {
+                    MessageBox.Show($"El investigador {inv.Nombre} tiene un conflicto de horario.", "Conflicto Detectado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     e.NewValue = CheckState.Unchecked;
+                }
             }
         }
 
@@ -216,7 +271,7 @@ namespace Proyecto_Reuniones
                 var reuniones = reunionesCol.Find(filtro).ToList();
                 foreach (var doc in reuniones)
                 {
-                    var idsDB = doc["idInvestigadores"].AsBsonArray.Select(x => x.AsBsonDocument["idInvestigador"].AsInt32);
+                    var idsDB = doc["investigadoresConvocados"].AsBsonArray.Select(x => x.AsBsonDocument["idInvestigador"].AsInt32);
                     if (ids.Any(id => idsDB.Contains(id)))
                     {
                         TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
@@ -305,7 +360,7 @@ namespace Proyecto_Reuniones
                         { "motivoReunion", txtMotivoReunion.Text.Trim() },
                         { "lugarReunion", cboLugarReunion.Text.Trim() },
                         { "idLider", int.Parse(txtIdLider.Text) },
-                        { "idInvestigadores", invs } // Aquí ahora se guarda el arreglo de objetos
+                        { "investigadoresConvocados", invs } // Aquí ahora se guarda el arreglo de objetos
                     };
 
                     reunionesCol.InsertOne(doc);

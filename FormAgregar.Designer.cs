@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnAgregarReunion = new System.Windows.Forms.Button();
             this.btnAgregar = new System.Windows.Forms.Button();
             this.dtpHoraFinalReunion = new System.Windows.Forms.DateTimePicker();
             this.dtpHoraInicioReunion = new System.Windows.Forms.DateTimePicker();
@@ -51,7 +52,6 @@
             this.txtIdReunion = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCancelar = new System.Windows.Forms.Button();
-            this.btnAgregarReunion = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,21 +79,32 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtIdReunion);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(21, 30);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox1.Location = new System.Drawing.Point(11, 11);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox1.Size = new System.Drawing.Size(777, 869);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Size = new System.Drawing.Size(583, 706);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Agregar Reunión";
             // 
+            // btnAgregarReunion
+            // 
+            this.btnAgregarReunion.Location = new System.Drawing.Point(190, 608);
+            this.btnAgregarReunion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnAgregarReunion.Name = "btnAgregarReunion";
+            this.btnAgregarReunion.Size = new System.Drawing.Size(76, 38);
+            this.btnAgregarReunion.TabIndex = 26;
+            this.btnAgregarReunion.Text = "Agregar Reunión";
+            this.btnAgregarReunion.UseVisualStyleBackColor = true;
+            this.btnAgregarReunion.Click += new System.EventHandler(this.btnAgregarReunion_Click);
+            // 
             // btnAgregar
             // 
-            this.btnAgregar.Location = new System.Drawing.Point(827, 860);
-            this.btnAgregar.Margin = new System.Windows.Forms.Padding(5);
+            this.btnAgregar.Location = new System.Drawing.Point(620, 699);
+            this.btnAgregar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(100, 28);
+            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
             this.btnAgregar.TabIndex = 23;
             this.btnAgregar.Text = "Agregar";
             this.btnAgregar.UseVisualStyleBackColor = true;
@@ -102,59 +113,59 @@
             // 
             this.dtpHoraFinalReunion.CustomFormat = "HH:mm";
             this.dtpHoraFinalReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpHoraFinalReunion.Location = new System.Drawing.Point(291, 236);
-            this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4);
+            this.dtpHoraFinalReunion.Location = new System.Drawing.Point(218, 192);
             this.dtpHoraFinalReunion.Name = "dtpHoraFinalReunion";
             this.dtpHoraFinalReunion.ShowUpDown = true;
-            this.dtpHoraFinalReunion.Size = new System.Drawing.Size(65, 22);
+            this.dtpHoraFinalReunion.Size = new System.Drawing.Size(50, 20);
             this.dtpHoraFinalReunion.TabIndex = 25;
             // 
             // dtpHoraInicioReunion
             // 
             this.dtpHoraInicioReunion.CustomFormat = "HH:mm";
             this.dtpHoraInicioReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpHoraInicioReunion.Location = new System.Drawing.Point(291, 187);
-            this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4);
+            this.dtpHoraInicioReunion.Location = new System.Drawing.Point(218, 152);
             this.dtpHoraInicioReunion.Name = "dtpHoraInicioReunion";
             this.dtpHoraInicioReunion.ShowUpDown = true;
-            this.dtpHoraInicioReunion.Size = new System.Drawing.Size(65, 22);
+            this.dtpHoraInicioReunion.Size = new System.Drawing.Size(50, 20);
             this.dtpHoraInicioReunion.TabIndex = 24;
             this.dtpHoraInicioReunion.Value = new System.DateTime(2026, 4, 29, 10, 48, 0, 0);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(36, 633);
+            this.label10.Location = new System.Drawing.Point(27, 514);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(148, 16);
+            this.label10.Size = new System.Drawing.Size(116, 13);
             this.label10.TabIndex = 20;
             this.label10.Text = "Agregar Investigadores";
             // 
             // clbListaInvestigadores
             // 
             this.clbListaInvestigadores.FormattingEnabled = true;
-            this.clbListaInvestigadores.Location = new System.Drawing.Point(291, 633);
-            this.clbListaInvestigadores.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.clbListaInvestigadores.Location = new System.Drawing.Point(218, 514);
+            this.clbListaInvestigadores.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.clbListaInvestigadores.Name = "clbListaInvestigadores";
             this.clbListaInvestigadores.ScrollAlwaysVisible = true;
-            this.clbListaInvestigadores.Size = new System.Drawing.Size(277, 72);
+            this.clbListaInvestigadores.Size = new System.Drawing.Size(209, 49);
             this.clbListaInvestigadores.TabIndex = 19;
             this.clbListaInvestigadores.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbListaInvestigadores_ItemCheck);
             // 
             // txtIdSemillero
             // 
-            this.txtIdSemillero.Location = new System.Drawing.Point(291, 578);
-            this.txtIdSemillero.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtIdSemillero.Location = new System.Drawing.Point(218, 470);
+            this.txtIdSemillero.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtIdSemillero.Name = "txtIdSemillero";
-            this.txtIdSemillero.Size = new System.Drawing.Size(277, 22);
+            this.txtIdSemillero.Size = new System.Drawing.Size(209, 20);
             this.txtIdSemillero.TabIndex = 18;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(36, 578);
+            this.label9.Location = new System.Drawing.Point(27, 470);
+            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(80, 16);
+            this.label9.Size = new System.Drawing.Size(63, 13);
             this.label9.TabIndex = 17;
             this.label9.Text = "ID Semillero";
             // 
@@ -163,89 +174,95 @@
             this.cboLugarReunion.FormattingEnabled = true;
             this.cboLugarReunion.Items.AddRange(new object[] {
             "Oficina de reuniones"});
-            this.cboLugarReunion.Location = new System.Drawing.Point(291, 473);
-            this.cboLugarReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cboLugarReunion.Location = new System.Drawing.Point(218, 384);
+            this.cboLugarReunion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cboLugarReunion.Name = "cboLugarReunion";
-            this.cboLugarReunion.Size = new System.Drawing.Size(277, 24);
+            this.cboLugarReunion.Size = new System.Drawing.Size(209, 21);
             this.cboLugarReunion.TabIndex = 16;
             // 
             // txtIdLider
             // 
-            this.txtIdLider.Location = new System.Drawing.Point(496, 527);
-            this.txtIdLider.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtIdLider.Location = new System.Drawing.Point(372, 428);
+            this.txtIdLider.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtIdLider.Name = "txtIdLider";
-            this.txtIdLider.Size = new System.Drawing.Size(72, 22);
+            this.txtIdLider.Size = new System.Drawing.Size(55, 20);
             this.txtIdLider.TabIndex = 15;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(469, 530);
+            this.label8.Location = new System.Drawing.Point(352, 431);
+            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(20, 16);
+            this.label8.Size = new System.Drawing.Size(18, 13);
             this.label8.TabIndex = 14;
             this.label8.Text = "ID";
             // 
             // txtLiderResponsable
             // 
-            this.txtLiderResponsable.Location = new System.Drawing.Point(291, 527);
-            this.txtLiderResponsable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtLiderResponsable.Location = new System.Drawing.Point(218, 428);
+            this.txtLiderResponsable.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtLiderResponsable.Name = "txtLiderResponsable";
-            this.txtLiderResponsable.Size = new System.Drawing.Size(152, 22);
+            this.txtLiderResponsable.Size = new System.Drawing.Size(115, 20);
             this.txtLiderResponsable.TabIndex = 13;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(36, 527);
+            this.label7.Location = new System.Drawing.Point(27, 428);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(122, 16);
+            this.label7.Size = new System.Drawing.Size(97, 13);
             this.label7.TabIndex = 12;
             this.label7.Text = "Líder Responsable";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(36, 473);
+            this.label6.Location = new System.Drawing.Point(27, 384);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 16);
+            this.label6.Size = new System.Drawing.Size(103, 13);
             this.label6.TabIndex = 10;
             this.label6.Text = "Lugar de la Reunión";
             // 
             // txtMotivoReunion
             // 
-            this.txtMotivoReunion.Location = new System.Drawing.Point(291, 306);
-            this.txtMotivoReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtMotivoReunion.Location = new System.Drawing.Point(218, 249);
+            this.txtMotivoReunion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtMotivoReunion.Multiline = true;
             this.txtMotivoReunion.Name = "txtMotivoReunion";
             this.txtMotivoReunion.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMotivoReunion.Size = new System.Drawing.Size(277, 133);
+            this.txtMotivoReunion.Size = new System.Drawing.Size(209, 109);
             this.txtMotivoReunion.TabIndex = 9;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(36, 306);
+            this.label5.Location = new System.Drawing.Point(27, 249);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(133, 16);
+            this.label5.Size = new System.Drawing.Size(108, 13);
             this.label5.TabIndex = 8;
             this.label5.Text = "Motivo de la Reunión";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(36, 244);
+            this.label4.Location = new System.Drawing.Point(27, 198);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(183, 16);
+            this.label4.Size = new System.Drawing.Size(146, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "Hora de Finalización Reunión";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(36, 187);
+            this.label3.Location = new System.Drawing.Point(27, 152);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(143, 16);
+            this.label3.Size = new System.Drawing.Size(115, 13);
             this.label3.TabIndex = 4;
             this.label3.Text = "Hora de inicio Reunión";
             // 
@@ -253,68 +270,60 @@
             // 
             this.dtpFechaReunion.CustomFormat = "yyyy-MM-dd";
             this.dtpFechaReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpFechaReunion.Location = new System.Drawing.Point(291, 108);
-            this.dtpFechaReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dtpFechaReunion.Location = new System.Drawing.Point(218, 88);
+            this.dtpFechaReunion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dtpFechaReunion.Name = "dtpFechaReunion";
-            this.dtpFechaReunion.Size = new System.Drawing.Size(277, 22);
+            this.dtpFechaReunion.Size = new System.Drawing.Size(209, 20);
             this.dtpFechaReunion.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(36, 114);
+            this.label2.Location = new System.Drawing.Point(27, 93);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(98, 16);
+            this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Fecha Reunión";
             // 
             // txtIdReunion
             // 
-            this.txtIdReunion.Location = new System.Drawing.Point(291, 48);
-            this.txtIdReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtIdReunion.Location = new System.Drawing.Point(218, 39);
+            this.txtIdReunion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtIdReunion.Name = "txtIdReunion";
-            this.txtIdReunion.Size = new System.Drawing.Size(277, 22);
+            this.txtIdReunion.Size = new System.Drawing.Size(209, 20);
             this.txtIdReunion.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(36, 50);
+            this.label1.Location = new System.Drawing.Point(27, 41);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 16);
+            this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "ID Reunión";
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(852, 78);
-            this.btnCancelar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnCancelar.Location = new System.Drawing.Point(639, 63);
+            this.btnCancelar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(75, 23);
+            this.btnCancelar.Size = new System.Drawing.Size(56, 19);
             this.btnCancelar.TabIndex = 1;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
-            // btnAgregarReunion
-            // 
-            this.btnAgregarReunion.Location = new System.Drawing.Point(254, 748);
-            this.btnAgregarReunion.Name = "btnAgregarReunion";
-            this.btnAgregarReunion.Size = new System.Drawing.Size(102, 47);
-            this.btnAgregarReunion.TabIndex = 26;
-            this.btnAgregarReunion.Text = "Agregar Reunión";
-            this.btnAgregarReunion.UseVisualStyleBackColor = true;
-            this.btnAgregarReunion.Click += new System.EventHandler(this.btnAgregarReunion_Click);
-            // 
             // FormAgregar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(956, 873);
+            this.ClientSize = new System.Drawing.Size(717, 674);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancelar);
             this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "FormAgregar";
             this.Load += new System.EventHandler(this.FormAgregar_Load);
             this.groupBox1.ResumeLayout(false);
