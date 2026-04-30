@@ -27,6 +27,12 @@ namespace Proyecto_Reuniones
             cboEstadoReunion.SelectedIndex = 0; // Seleccionamos "Todas" por defecto para mostrar todas las reuniones sin filtrar por estado
         }
 
+        private void FormPrincipal_Load(object sender, EventArgs e)
+        {
+            timer1.Start();
+            ActualizarReloj();
+        }
+
         /*----------------------------------------------------------------------------------------------------------------*/
         // Configura la interfaz según el rol del usuario, muestra un mensaje de bienvenida y carga el ComboBox de filtros
         /*----------------------------------------------------------------------------------------------------------------*/
@@ -524,5 +530,16 @@ namespace Proyecto_Reuniones
             }
         }
 
+        private void ActualizarReloj()
+        {
+            lblFechaHora.Text = DateTime.Now.ToString("yyyy/MM/dd  HH:mm:ss");
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            ActualizarReloj();
+        }
+
+       
     }
 }
