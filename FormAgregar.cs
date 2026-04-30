@@ -249,8 +249,8 @@ namespace Proyecto_Reuniones
         }
 
         private void btnCancelar_Click(object sender, EventArgs e) {
+            MessageBox.Show("¿Está seguro de que desea cancelar? Se perderán los datos ingresados.", "Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             this.Close();
-            
         }
 
         private void button1_Click(object sender, EventArgs e)

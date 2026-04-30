@@ -1,1 +1,1 @@
-mongodb+srv://admin:admin123456789@proyectoreunion.ubwkmd8.mongodb.net/?appName=ProyectoReunion
+mongodb://admin:admin123456789@ac-vrzgkul-shard-00-00.ubwkmd8.mongodb.net:27017,ac-vrzgkul-shard-00-01.ubwkmd8.mongodb.net:27017,ac-vrzgkul-shard-00-02.ubwkmd8.mongodb.net:27017/?ssl=true&replicaSet=atlas-tadnmm-shard-0&authSource=admin&appName=ProyectoReunion
