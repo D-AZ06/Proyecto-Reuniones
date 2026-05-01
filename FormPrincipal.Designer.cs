@@ -47,8 +47,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnReporte = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnEliminarReunion = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -135,7 +138,7 @@
             // 
             // btnVerReunion
             // 
-            this.btnVerReunion.Location = new System.Drawing.Point(959, 281);
+            this.btnVerReunion.Location = new System.Drawing.Point(49, 20);
             this.btnVerReunion.Name = "btnVerReunion";
             this.btnVerReunion.Size = new System.Drawing.Size(95, 50);
             this.btnVerReunion.TabIndex = 5;
@@ -152,7 +155,7 @@
             "Programadas",
             "En Ejecución",
             "Finalizadas"});
-            this.cboEstadoReunion.Location = new System.Drawing.Point(933, 369);
+            this.cboEstadoReunion.Location = new System.Drawing.Point(23, 108);
             this.cboEstadoReunion.Name = "cboEstadoReunion";
             this.cboEstadoReunion.Size = new System.Drawing.Size(121, 24);
             this.cboEstadoReunion.TabIndex = 6;
@@ -195,7 +198,7 @@
             // 
             this.cboAsistencia.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboAsistencia.FormattingEnabled = true;
-            this.cboAsistencia.Location = new System.Drawing.Point(933, 423);
+            this.cboAsistencia.Location = new System.Drawing.Point(23, 162);
             this.cboAsistencia.Name = "cboAsistencia";
             this.cboAsistencia.Size = new System.Drawing.Size(121, 24);
             this.cboAsistencia.TabIndex = 10;
@@ -203,7 +206,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1065, 377);
+            this.label1.Location = new System.Drawing.Point(155, 116);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(103, 16);
             this.label1.TabIndex = 11;
@@ -212,7 +215,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1065, 426);
+            this.label2.Location = new System.Drawing.Point(155, 165);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(129, 16);
             this.label2.TabIndex = 12;
@@ -228,21 +231,42 @@
             this.btnReporte.UseVisualStyleBackColor = true;
             this.btnReporte.Click += new System.EventHandler(this.btnReporte_Click);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.btnVerReunion);
+            this.groupBox2.Controls.Add(this.cboEstadoReunion);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.cboAsistencia);
+            this.groupBox2.Location = new System.Drawing.Point(922, 228);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(294, 212);
+            this.groupBox2.TabIndex = 14;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Consultar reuniones";
+            // 
+            // btnEliminarReunion
+            // 
+            this.btnEliminarReunion.Location = new System.Drawing.Point(941, 713);
+            this.btnEliminarReunion.Name = "btnEliminarReunion";
+            this.btnEliminarReunion.Size = new System.Drawing.Size(113, 48);
+            this.btnEliminarReunion.TabIndex = 15;
+            this.btnEliminarReunion.Text = "Eliminar Reunión";
+            this.btnEliminarReunion.UseVisualStyleBackColor = true;
+            this.btnEliminarReunion.Click += new System.EventHandler(this.btnEliminarReunion_Click);
+            // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1512, 791);
             this.ControlBox = false;
+            this.Controls.Add(this.btnEliminarReunion);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnReporte);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.cboAsistencia);
             this.Controls.Add(this.btnConfirmarAsistencia);
             this.Controls.Add(this.lblNombreYApellido);
             this.Controls.Add(this.lblFechaHora);
-            this.Controls.Add(this.cboEstadoReunion);
-            this.Controls.Add(this.btnVerReunion);
             this.Controls.Add(this.btnAgregarReunión);
             this.Controls.Add(this.btnAtras);
             this.Controls.Add(this.groupBox1);
@@ -253,6 +277,8 @@
             this.Load += new System.EventHandler(this.FormPrincipal_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,5 +303,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnReporte;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button btnEliminarReunion;
     }
 }

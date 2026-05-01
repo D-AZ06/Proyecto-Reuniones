@@ -60,6 +60,10 @@ namespace Proyecto_Reuniones
             {
                 btnAgregarReunión.Enabled = false;
                 btnAgregarReunión.Visible = false;
+                btnReporte.Enabled = false;
+                btnReporte.Visible = false;
+                btnEliminarReunion.Enabled = false;
+                btnEliminarReunion.Visible = false;
 
                 cboAsistencia.Items.Add("Todas");
                 cboAsistencia.Items.Add("pendiente");
@@ -977,6 +981,72 @@ namespace Proyecto_Reuniones
         {
             FormReporte formReporte = new FormReporte(this.datosUsuario);
             formReporte.Show();
+            this.Hide();
+        }
+
+        private async void btnEliminarReunion_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null)
+            {
+                MessageBox.Show("Selecciona una reunión para eliminar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int idReunion = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
+            string estado = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+
+            if (estado == "En ejecución")
+            {
+                MessageBox.Show("No puedes eliminar una reunión que está en curso.", "No permitido",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (estado == "Finalizadas")
+            {
+                MessageBox.Show("No puedes eliminar una reunión que ya finalizó.", "No permitido",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Verificar si algún investigador ya confirmó asistencia
+            try
+            {
+                var colReuniones = Conexion.ObtenerBaseDatos().GetCollection<BsonDocument>("Reuniones");
+                var filtro = Builders<BsonDocument>.Filter.Eq("idReunion", idReunion);
+                var reunion = await colReuniones.Find(filtro).FirstOrDefaultAsync();
+
+                if (reunion != null && reunion.Contains("investigadoresConvocados"))
+                {
+                    foreach (var conv in reunion["investigadoresConvocados"].AsBsonArray)
+                    {
+                        if (conv["asistencia"].AsString == "confirmado")
+                        {
+                            MessageBox.Show("No puedes eliminar esta reunión, uno o más investigadores ya confirmaron asistencia.", "No permitido",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                }
+
+                var resultado = MessageBox.Show(
+                    $"¿Estás seguro de eliminar la reunión {idReunion}?",
+                    "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (resultado == DialogResult.Yes)
+                {
+                    await colReuniones.DeleteOneAsync(filtro);
+                    MessageBox.Show("Reunión eliminada correctamente.", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await RecargarGrid();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al eliminar: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
