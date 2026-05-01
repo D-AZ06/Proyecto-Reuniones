@@ -23,3 +23,12 @@ desktop.ini
 
 # --- Configuraciones Sensibles ---
 LlaveAcceso.text
+
+# --- Crystal Reports ---
+# Archivos temporales que genera el diseñador al abrir un .rpt
+*.rpt.vbc
+*.rpt.cs
+*.rpt.txt
+
+# Archivos de caché de recursos de Crystal
+crystalreportviewers*/

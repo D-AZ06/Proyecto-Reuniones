@@ -972,5 +972,11 @@ namespace Proyecto_Reuniones
         {
             ActualizarReloj();
         }
+
+        private void btnReporte_Click(object sender, EventArgs e)
+        {
+            FormReporte formReporte = new FormReporte(this.datosUsuario);
+            formReporte.Show();
+        }
     }
 }
