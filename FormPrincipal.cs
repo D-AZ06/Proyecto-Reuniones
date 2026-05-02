@@ -64,6 +64,8 @@ namespace Proyecto_Reuniones
                 btnReporte.Visible = false;
                 btnEliminarReunion.Enabled = false;
                 btnEliminarReunion.Visible = false;
+                btnModificarReunion.Enabled = false;
+                btnModificarReunion.Visible = false;
 
                 cboAsistencia.Items.Add("Todas");
                 cboAsistencia.Items.Add("pendiente");
@@ -217,6 +219,8 @@ namespace Proyecto_Reuniones
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            if (HayMasDeUnaFilaSeleccionada("confirmar asistencia")) return;
 
             int idReunionSeleccionada = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
 
@@ -993,6 +997,8 @@ namespace Proyecto_Reuniones
                 return;
             }
 
+            if (HayMasDeUnaFilaSeleccionada("eliminar")) return;
+
             int idReunion = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
             string estado = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
 
@@ -1047,6 +1053,77 @@ namespace Proyecto_Reuniones
                 MessageBox.Show($"Error al eliminar: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private async void btnModificarReunion_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null)
+            {
+                MessageBox.Show("Selecciona una reunión para editar.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (HayMasDeUnaFilaSeleccionada("modificar")) return;
+
+            int idReunion = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
+            string estado = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+
+            if (estado == "En ejecución")
+            {
+                MessageBox.Show("No puedes editar una reunión que está en curso.", "No permitido",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (estado == "Finalizadas")
+            {
+                MessageBox.Show("No puedes editar una reunión que ya finalizó.", "No permitido",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                var colReuniones = Conexion.ObtenerBaseDatos().GetCollection<BsonDocument>("Reuniones");
+                var filtro = Builders<BsonDocument>.Filter.Eq("idReunion", idReunion);
+                var reunion = await colReuniones.Find(filtro).FirstOrDefaultAsync();
+
+                if (reunion != null && reunion.Contains("investigadoresConvocados"))
+                {
+                    foreach (var conv in reunion["investigadoresConvocados"].AsBsonArray)
+                    {
+                        if (conv["asistencia"].AsString == "confirmado")
+                        {
+                            MessageBox.Show("No puedes editar esta reunión, uno o más investigadores ya confirmaron asistencia.", "No permitido",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                }
+
+                FormAgregar formAgregar = new FormAgregar(this.datosUsuario);
+                formAgregar.modoEdicion = true;
+                formAgregar.reunionAEditar = reunion;
+                formAgregar.ShowDialog();
+                await RecargarGrid();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al abrir edición: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool HayMasDeUnaFilaSeleccionada(string accion)
+        {
+            if (dataGridView1.SelectedRows.Count > 1)
+            {
+                MessageBox.Show($"Solo puedes seleccionar una reunión para {accion}.",
+                    "Selección múltiple", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return true;
+            }
+            return false;
         }
     }
 }

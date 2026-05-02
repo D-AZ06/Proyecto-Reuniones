@@ -49,6 +49,7 @@
             this.btnReporte = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnEliminarReunion = new System.Windows.Forms.Button();
+            this.btnModificarReunion = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -255,12 +256,23 @@
             this.btnEliminarReunion.UseVisualStyleBackColor = true;
             this.btnEliminarReunion.Click += new System.EventHandler(this.btnEliminarReunion_Click);
             // 
+            // btnModificarReunion
+            // 
+            this.btnModificarReunion.Location = new System.Drawing.Point(1295, 531);
+            this.btnModificarReunion.Name = "btnModificarReunion";
+            this.btnModificarReunion.Size = new System.Drawing.Size(105, 59);
+            this.btnModificarReunion.TabIndex = 16;
+            this.btnModificarReunion.Text = "Modificar Reunión";
+            this.btnModificarReunion.UseVisualStyleBackColor = true;
+            this.btnModificarReunion.Click += new System.EventHandler(this.btnModificarReunion_Click);
+            // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1512, 791);
             this.ControlBox = false;
+            this.Controls.Add(this.btnModificarReunion);
             this.Controls.Add(this.btnEliminarReunion);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnReporte);
@@ -305,5 +317,6 @@
         private System.Windows.Forms.Button btnReporte;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnEliminarReunion;
+        private System.Windows.Forms.Button btnModificarReunion;
     }
 }

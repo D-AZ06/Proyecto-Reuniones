@@ -28,6 +28,10 @@ namespace Proyecto_Reuniones
         private const int MOTIVO_MIN_CHARS = 10;  // mínimo de caracteres en el motivo
         private const double RATIO_VOCALES_MIN = 0.20; // al menos 20% del texto deben ser vocales
 
+        // Variable para controlar si estamos en modo edición (reutilizando el form) o creando nueva reunión.
+        public bool modoEdicion = false;
+        public BsonDocument reunionAEditar = null;
+
         public FormAgregar(DatosUsuario datosRecibidos)
         {
             InitializeComponent();
@@ -105,6 +109,48 @@ namespace Proyecto_Reuniones
                 GenerarIdReunion();
                 CargarInvestigadores(usuarioLogueado.IdSemillero);
                 CargarLugares();
+
+                // Si estamos en modo edición, cargar los datos de la reunión a editar en los campos correspondientes
+                if (modoEdicion && reunionAEditar != null)
+                {
+                    txtIdReunion.Text = reunionAEditar["idReunion"].ToInt32().ToString(); // ← primera línea del bloque
+                    this.Text = "Editar reunión";
+                    btnAgregarReunion.Text = "Modificar Reunión";
+
+                    txtMotivoReunion.Text = reunionAEditar["motivoReunion"].AsString;
+                    cboLugarReunion.Text = reunionAEditar["lugarReunion"].AsString;
+
+                    if (DateTime.TryParse(reunionAEditar["fechaReunion"].AsString, out DateTime fecha))
+                    {
+                        dtpFechaReunion.Value = fecha;
+                    }
+
+                    if (DateTime.TryParse(reunionAEditar["fechaReunion"].AsString + " " + reunionAEditar["horaInicio"].AsString, out DateTime ini) &&
+                        DateTime.TryParse(reunionAEditar["fechaReunion"].AsString + " " + reunionAEditar["horaFin"].AsString, out DateTime fin))
+                    {
+                        SincronizarHoras(ini, fin);
+                    }
+
+                    if (reunionAEditar.Contains("investigadoresConvocados"))
+                    {
+                        var idsConvocados = new HashSet<int>();
+
+                        foreach (var conv in reunionAEditar["investigadoresConvocados"].AsBsonArray)
+                        {
+                            idsConvocados.Add(conv["idInvestigador"].ToInt32());
+                        }
+
+                        for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
+                        {
+                            var inv = (ItemInvestigador)clbListaInvestigadores.Items[i];
+
+                            if (idsConvocados.Contains(inv.Id))
+                            {
+                                clbListaInvestigadores.SetItemChecked(i, true);
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -493,9 +539,22 @@ namespace Proyecto_Reuniones
 
                 foreach (var doc in reuniones)
                 {
-                    var idsDB = doc["idInvestigadores"]
+                    if (!doc.Contains("investigadoresConvocados")) // Si la reunión no tiene investigadores convocados, no hay conflicto
+                    {
+                        continue;
+                    }
+
+                    // Extraemos solo los IDs de los investigadores convocados para esta reunión
+                    var idsDB = doc["investigadoresConvocados"]
                                     .AsBsonArray
                                     .Select(x => x.AsBsonDocument["idInvestigador"].AsInt32);
+
+                    // Excluimos la reunión actual para que no choque consigo misma
+                    if (modoEdicion && reunionAEditar != null &&
+                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
+                    {
+                        continue;
+                    }
 
                     if (ids.Any(id => idsDB.Contains(id)))
                     {
@@ -536,6 +595,13 @@ namespace Proyecto_Reuniones
                     TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
                     TimeSpan dbF = TimeSpan.Parse(doc["horaFin"].AsString);
 
+                    // Excluimos la reunión actual para que no choque consigo misma
+                    if (modoEdicion && reunionAEditar != null &&
+                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
+                    {
+                        continue;
+                    }
+
                     if (tI < dbF && tF > dbI)
                     {
                         motivoConflicto = doc["motivoReunion"].AsString;
@@ -552,10 +618,45 @@ namespace Proyecto_Reuniones
             return false;
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        //  LIMPIAR / CANCELAR
+        // ════════════════════════════════════════════════════════════════════
+        private void LimpiarFormulario()
+        {
+            cargandoFormulario = true;
+            txtMotivoReunion.Clear();
+            cboLugarReunion.SelectedIndex = -1;
+            DateTime ahora = DateTime.Now;
+            dtpFechaReunion.Value = ahora.Date;
+            SincronizarHoras(ahora, ahora.AddMinutes(DURACION_MIN_MIN));
+            for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
+                clbListaInvestigadores.SetItemChecked(i, false);
+            GenerarIdReunion(); // actualiza _idReunionGenerado y el TextBox
+            cargandoFormulario = false;
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            DialogResult r = MessageBox.Show(
+                "¿Está seguro de que desea cancelar? Se perderán los datos ingresados.",
+                "Confirmar Cancelación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (r == DialogResult.Yes)
+                this.Close();
+        }
+
+
         // ════════════════════════════════════════════════════════════════════
         //  GUARDAR REUNIÓN
         // ════════════════════════════════════════════════════════════════════
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAgregarReunion_Click(object sender, EventArgs e)
         {
             // ── 1. Validar día domingo ──────────────────────────────────────
             if (dtpFechaReunion.Value.DayOfWeek == DayOfWeek.Sunday)
@@ -647,11 +748,22 @@ namespace Proyecto_Reuniones
             }
 
             // ── Confirmación ───────────────────────────────────────────────
-            DialogResult resultado = MessageBox.Show(
-                "¿Está seguro de que desea agendar esta reunión?",
-                "Confirmar Guardado",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+            string mensajeConfirmacion;
+            string tituloConfirmacion;
+
+            if (modoEdicion)
+            {
+                mensajeConfirmacion = "¿Está seguro de que desea guardar los cambios en esta reunión?";
+                tituloConfirmacion = "Confirmar Edición";
+            }
+            else
+            {
+                mensajeConfirmacion = "¿Está seguro de que desea agendar esta reunión?";
+                tituloConfirmacion = "Confirmar Guardado";
+            }
+
+            DialogResult resultado = MessageBox.Show(mensajeConfirmacion, tituloConfirmacion,
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (resultado != DialogResult.Yes) return;
 
@@ -677,46 +789,37 @@ namespace Proyecto_Reuniones
                     { "idInvestigadores", invs }
                 };
 
-                reunionesCol.InsertOne(doc);
+                // Si estamos editando, actualizamos el documento existente. Si es nuevo, insertamos uno nuevo.
+                if (modoEdicion && reunionAEditar != null)
+                {
+                    var filtroUpdate = Builders<BsonDocument>.Filter.Eq("idReunion", reunionAEditar["idReunion"].ToInt32());
 
-                MessageBox.Show("La reunión ha sido guardada exitosamente.",
-                    "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LimpiarFormulario();
+                    var update = Builders<BsonDocument>.Update
+                        .Set("fechaReunion", dtpFechaReunion.Value.ToString("yyyy-MM-dd"))
+                        .Set("horaInicio", dtpHoraInicioReunion.Value.ToString("HH:mm"))
+                        .Set("horaFin", dtpHoraFinalReunion.Value.ToString("HH:mm"))
+                        .Set("motivoReunion", txtMotivoReunion.Text.Trim())
+                        .Set("lugarReunion", lugarSeleccionado)
+                        .Set("investigadoresConvocados", invs);
+
+                    reunionesCol.UpdateOne(filtroUpdate, update);
+                    MessageBox.Show("Reunión actualizada exitosamente.", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    reunionesCol.InsertOne(doc);
+                    MessageBox.Show("La reunión ha sido guardada exitosamente.", "Éxito",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LimpiarFormulario();
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error al guardar: " + ex.Message,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        // ════════════════════════════════════════════════════════════════════
-        //  LIMPIAR / CANCELAR
-        // ════════════════════════════════════════════════════════════════════
-        private void LimpiarFormulario()
-        {
-            cargandoFormulario = true;
-            txtMotivoReunion.Clear();
-            cboLugarReunion.SelectedIndex = -1;
-            DateTime ahora = DateTime.Now;
-            dtpFechaReunion.Value = ahora.Date;
-            SincronizarHoras(ahora, ahora.AddMinutes(DURACION_MIN_MIN));
-            for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
-                clbListaInvestigadores.SetItemChecked(i, false);
-            GenerarIdReunion(); // actualiza _idReunionGenerado y el TextBox
-            cargandoFormulario = false;
-        }
-
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-            DialogResult r = MessageBox.Show(
-                "¿Está seguro de que desea cancelar? Se perderán los datos ingresados.",
-                "Confirmar Cancelación",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (r == DialogResult.Yes)
-                this.Close();
         }
     }
 
