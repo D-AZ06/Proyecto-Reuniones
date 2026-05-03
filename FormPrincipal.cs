@@ -32,11 +32,49 @@ namespace Proyecto_Reuniones
             timer1.Start();
             ActualizarReloj();
             lblNombreYApellido.Text = datosUsuario.Nombre;
+            lblRol.Text = datosUsuario.Rol;
 
             if (datosUsuario.Rol == "Investigador")
             {
                 _ = DetectarYMarcarConflictos();
             }
+
+            // 1. Estilo General (Fondo Blanco)
+            dataGridView1.EnableHeadersVisualStyles = false;
+            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.BorderStyle = BorderStyle.None;
+            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridView1.GridColor = Color.FromArgb(230, 230, 230); // Gris muy tenue para las líneas
+
+            // 2. Cabecera (Azul Profesional - Basado en tus botones de "Consultar")
+            // Este es el azul que se ve en la parte superior de tu captura
+            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(70, 130, 180);
+            dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dataGridView1.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 130, 180);
+            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Arial Rounded MT", 8, FontStyle.Bold);
+            dataGridView1.ColumnHeadersHeight = 35;
+            dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
+            // 3. Filas (Ajuste de Blancos y Grises)
+            // Esto asegura que la fila 306 sea BLANCA
+            dataGridView1.DefaultCellStyle.BackColor = Color.White;
+            dataGridView1.DefaultCellStyle.ForeColor = Color.Black;
+            // Azul muy clarito para cuando hagas clic en una fila
+            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.FromArgb(210, 230, 245);
+            dataGridView1.DefaultCellStyle.SelectionForeColor = Color.Black;
+            dataGridView1.DefaultCellStyle.Font = new Font("Arial Rounded MT", 8);
+
+            // 4. Filas Alternas (Gris muy suave para lectura)
+            // Si quieres que la fila 306 sea blanca, la 307 será de este color gris:
+            dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
+
+            // 5. Limpieza de Interfaz
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // IMPORTANTE: Pon esto después de cargar tus datos para que la 306 no se vea azul al inicio
+            dataGridView1.ClearSelection();
         }
 
         private void ConfigurarInterfaz()
@@ -68,6 +106,11 @@ namespace Proyecto_Reuniones
                 btnEliminarReunion.Enabled = false; btnEliminarReunion.Visible = false;
                 btnModificarReunion.Enabled = false; btnModificarReunion.Visible = false;
 
+                pictureBox4.Visible = false;
+                pictureBox6.Visible = false;
+                pictureBox8.Visible = false;
+
+
                 // Pero sí puede filtrar por su asistencia
                 cboAsistencia.Items.AddRange(new[] { "Todas", "pendiente", "confirmado", "rechazado", "conflicto" });
                 cboAsistencia.SelectedIndex = 0;
@@ -77,6 +120,8 @@ namespace Proyecto_Reuniones
                 // El líder NO necesita el filtro de asistencia ni el botón de confirmar
                 cboAsistencia.Visible = false; cboAsistencia.Enabled = false;
                 btnConfirmarAsistencia.Visible = false; btnConfirmarAsistencia.Enabled = false;
+                lbl_confirmarAsistencia.Visible=false;
+                icono_asistencia.Visible = false;
             }
         }
 
@@ -960,6 +1005,51 @@ namespace Proyecto_Reuniones
                 new Form1().Show();
                 this.Close();
             }
+        }
+
+        private void cboAsistencia_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelFiltro_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void cboEstadoReunion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblNombreYApellido_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

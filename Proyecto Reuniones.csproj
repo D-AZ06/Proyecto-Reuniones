@@ -314,6 +314,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="ReporteReuniones.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
@@ -337,6 +338,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\reloj.png" />
+    <None Include="Resources\ubi.png" />
+    <None Include="Resources\+.png" />
+    <None Include="Resources\editar.png" />
+    <None Include="Resources\fnd grumos.jpeg" />
+    <None Include="Resources\buscar.png" />
+    <None Include="Resources\salir.png" />
+    <None Include="img\reporte.png" />
+    <None Include="img\asistencia.png" />
+    <None Include="img\mas.png" />
+    <None Include="img\eliminar.png" />
     <Content Include="LlaveAcceso%28renombrar%29.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -344,6 +356,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="mongocrypt.dll" />
+    <None Include="Resources\usuario.png" />
+    <None Include="Resources\logo gessi.png" />
+    <None Include="Resources\Captura de pantalla 2026-05-03 094224.png" />
+    <None Include="Resources\Captura de pantalla 2026-05-03 003013.png" />
+    <None Include="Resources\Captura de pantalla 2026-05-03 000509.png" />
+    <None Include="Resources\fondo_loguin_reunion.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="packages\AWSSDK.SecurityToken.4.0.6.2\analyzers\dotnet\cs\AWSSDK.SecurityToken.CodeAnalysis.dll" />

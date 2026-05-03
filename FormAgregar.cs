@@ -821,6 +821,46 @@ namespace Proyecto_Reuniones
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void dtpHoraFinalReunion_ValueChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dtpHoraInicioReunion_ValueChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dtpFechaReunion_ValueChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     // ════════════════════════════════════════════════════════════════════════

@@ -29,39 +29,21 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblMensajeCorreo = new System.Windows.Forms.Label();
             this.lblConexion = new System.Windows.Forms.Label();
             this.btnIniciarSesión = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.txtContraseña = new System.Windows.Forms.TextBox();
-            this.txtCorreo = new System.Windows.Forms.TextBox();
             this.btnSalir = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.txtCorreo = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.lblMensajeCorreo);
-            this.groupBox1.Controls.Add(this.lblConexion);
-            this.groupBox1.Controls.Add(this.btnIniciarSesión);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtContraseña);
-            this.groupBox1.Controls.Add(this.txtCorreo);
-            this.groupBox1.Location = new System.Drawing.Point(338, 74);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(893, 513);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Iniciar Sesión";
             // 
             // lblMensajeCorreo
             // 
             this.lblMensajeCorreo.AutoSize = true;
+            this.lblMensajeCorreo.BackColor = System.Drawing.Color.Transparent;
+            this.lblMensajeCorreo.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMensajeCorreo.ForeColor = System.Drawing.Color.Red;
-            this.lblMensajeCorreo.Location = new System.Drawing.Point(428, 206);
+            this.lblMensajeCorreo.Location = new System.Drawing.Point(808, 244);
             this.lblMensajeCorreo.Name = "lblMensajeCorreo";
             this.lblMensajeCorreo.Size = new System.Drawing.Size(10, 16);
             this.lblMensajeCorreo.TabIndex = 6;
@@ -70,7 +52,8 @@
             // lblConexion
             // 
             this.lblConexion.AutoSize = true;
-            this.lblConexion.Location = new System.Drawing.Point(280, 437);
+            this.lblConexion.BackColor = System.Drawing.Color.Transparent;
+            this.lblConexion.Location = new System.Drawing.Point(808, 449);
             this.lblConexion.Name = "lblConexion";
             this.lblConexion.Size = new System.Drawing.Size(13, 16);
             this.lblConexion.TabIndex = 5;
@@ -78,86 +61,89 @@
             // 
             // btnIniciarSesión
             // 
-            this.btnIniciarSesión.Location = new System.Drawing.Point(324, 369);
+            this.btnIniciarSesión.BackColor = System.Drawing.Color.RoyalBlue;
+            this.btnIniciarSesión.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnIniciarSesión.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnIniciarSesión.ForeColor = System.Drawing.Color.White;
+            this.btnIniciarSesión.Location = new System.Drawing.Point(811, 360);
             this.btnIniciarSesión.Name = "btnIniciarSesión";
-            this.btnIniciarSesión.Size = new System.Drawing.Size(219, 49);
+            this.btnIniciarSesión.Size = new System.Drawing.Size(279, 49);
             this.btnIniciarSesión.TabIndex = 4;
             this.btnIniciarSesión.Text = "Iniciar Sesión";
-            this.btnIniciarSesión.UseVisualStyleBackColor = true;
+            this.btnIniciarSesión.UseVisualStyleBackColor = false;
+            this.btnIniciarSesión.UseWaitCursor = true;
             this.btnIniciarSesión.Click += new System.EventHandler(this.btnIniciarSesión_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(321, 253);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(76, 16);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Contraseña";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(321, 184);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 16);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Correo";
             // 
             // txtContraseña
             // 
-            this.txtContraseña.Location = new System.Drawing.Point(431, 247);
+            this.txtContraseña.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(253)))));
+            this.txtContraseña.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtContraseña.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtContraseña.Location = new System.Drawing.Point(853, 298);
             this.txtContraseña.Name = "txtContraseña";
-            this.txtContraseña.Size = new System.Drawing.Size(215, 22);
+            this.txtContraseña.Size = new System.Drawing.Size(237, 17);
             this.txtContraseña.TabIndex = 1;
             this.txtContraseña.UseSystemPasswordChar = true;
-            // 
-            // txtCorreo
-            // 
-            this.txtCorreo.Location = new System.Drawing.Point(431, 181);
-            this.txtCorreo.Name = "txtCorreo";
-            this.txtCorreo.Size = new System.Drawing.Size(215, 22);
-            this.txtCorreo.TabIndex = 0;
-            this.txtCorreo.TextChanged += new System.EventHandler(this.txtCorreo_TextChanged);
+            this.txtContraseña.UseWaitCursor = true;
             // 
             // btnSalir
             // 
-            this.btnSalir.Location = new System.Drawing.Point(48, 41);
+            this.btnSalir.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnSalir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSalir.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSalir.ForeColor = System.Drawing.Color.White;
+            this.btnSalir.Location = new System.Drawing.Point(968, 581);
             this.btnSalir.Name = "btnSalir";
-            this.btnSalir.Size = new System.Drawing.Size(98, 48);
+            this.btnSalir.Size = new System.Drawing.Size(198, 48);
             this.btnSalir.TabIndex = 2;
-            this.btnSalir.Text = "Salir del Programa";
-            this.btnSalir.UseVisualStyleBackColor = true;
+            this.btnSalir.Text = "Salir de la app";
+            this.btnSalir.UseVisualStyleBackColor = false;
             this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
+            // 
+            // txtCorreo
+            // 
+            this.txtCorreo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(253)))));
+            this.txtCorreo.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtCorreo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCorreo.Location = new System.Drawing.Point(853, 211);
+            this.txtCorreo.Name = "txtCorreo";
+            this.txtCorreo.Size = new System.Drawing.Size(237, 17);
+            this.txtCorreo.TabIndex = 0;
+            this.txtCorreo.TextChanged += new System.EventHandler(this.txtCorreo_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1512, 791);
+            this.BackgroundImage = global::Proyecto_Reuniones.Properties.Resources.Captura_de_pantalla_2026_05_03_003013;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(1193, 689);
             this.ControlBox = false;
             this.Controls.Add(this.btnSalir);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.lblMensajeCorreo);
+            this.Controls.Add(this.lblConexion);
+            this.Controls.Add(this.btnIniciarSesión);
+            this.Controls.Add(this.txtCorreo);
+            this.Controls.Add(this.txtContraseña);
+            this.DoubleBuffered = true;
+            this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.UseWaitCursor = true;
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnIniciarSesión;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtContraseña;
-        private System.Windows.Forms.TextBox txtCorreo;
         private System.Windows.Forms.Label lblConexion;
         private System.Windows.Forms.Button btnSalir;
         private System.Windows.Forms.Label lblMensajeCorreo;
+        private System.Windows.Forms.TextBox txtCorreo;
     }
 }
 

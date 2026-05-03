@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace Proyecto_Reuniones
 {
@@ -116,15 +117,26 @@ namespace Proyecto_Reuniones
             if (valido)
             {
                 btnIniciarSesión.Enabled = true;
-                txtCorreo.BackColor = Color.White;
+              //  txtCorreo.BackColor = Color.LightBlue;
                 lblMensajeCorreo.Text = "";
             }
             else
             {
                 btnIniciarSesión.Enabled = false;
-                txtCorreo.BackColor = Color.MistyRose;
+               // txtCorreo.BackColor = Color.MistyRose;
                 lblMensajeCorreo.Text = "Correo no válido";
             }
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+
+        private const int EM_SETCUEBANNER = 0x1501;
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            SendMessage(txtCorreo.Handle, EM_SETCUEBANNER, 0, "ejemplo@correo.com");
+            SendMessage(txtContraseña.Handle, EM_SETCUEBANNER, 0, "Escriba su contraseña...");
         }
     }
 }
