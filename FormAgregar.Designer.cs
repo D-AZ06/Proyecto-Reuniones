@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblMensajeError = new System.Windows.Forms.Label();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
@@ -78,6 +79,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Transparent;
+            this.groupBox1.Controls.Add(this.lblMensajeError);
             this.groupBox1.Controls.Add(this.pictureBox6);
             this.groupBox1.Controls.Add(this.pictureBox5);
             this.groupBox1.Controls.Add(this.pictureBox2);
@@ -107,22 +109,33 @@
             this.groupBox1.Controls.Add(this.txtIdReunion);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(3, 99);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox1.Location = new System.Drawing.Point(2, 80);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox1.Size = new System.Drawing.Size(765, 579);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Size = new System.Drawing.Size(574, 470);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Agregar Reunión";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
+            // lblMensajeError
+            // 
+            this.lblMensajeError.AutoSize = true;
+            this.lblMensajeError.Location = new System.Drawing.Point(331, 311);
+            this.lblMensajeError.Name = "lblMensajeError";
+            this.lblMensajeError.Size = new System.Drawing.Size(66, 18);
+            this.lblMensajeError.TabIndex = 32;
+            this.lblMensajeError.Text = "label11";
+            this.lblMensajeError.Click += new System.EventHandler(this.label11_Click);
+            // 
             // pictureBox6
             // 
             this.pictureBox6.Image = global::Proyecto_Reuniones.Properties.Resources.reloj;
-            this.pictureBox6.Location = new System.Drawing.Point(275, 89);
+            this.pictureBox6.Location = new System.Drawing.Point(206, 72);
+            this.pictureBox6.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox6.Name = "pictureBox6";
-            this.pictureBox6.Size = new System.Drawing.Size(18, 18);
+            this.pictureBox6.Size = new System.Drawing.Size(14, 15);
             this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox6.TabIndex = 31;
             this.pictureBox6.TabStop = false;
@@ -130,9 +143,10 @@
             // pictureBox5
             // 
             this.pictureBox5.Image = global::Proyecto_Reuniones.Properties.Resources.reloj;
-            this.pictureBox5.Location = new System.Drawing.Point(680, 89);
+            this.pictureBox5.Location = new System.Drawing.Point(510, 72);
+            this.pictureBox5.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox5.Name = "pictureBox5";
-            this.pictureBox5.Size = new System.Drawing.Size(18, 18);
+            this.pictureBox5.Size = new System.Drawing.Size(14, 15);
             this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox5.TabIndex = 30;
             this.pictureBox5.TabStop = false;
@@ -140,9 +154,10 @@
             // pictureBox2
             // 
             this.pictureBox2.Image = global::Proyecto_Reuniones.Properties.Resources.ubi;
-            this.pictureBox2.Location = new System.Drawing.Point(214, 136);
+            this.pictureBox2.Location = new System.Drawing.Point(160, 110);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(24, 23);
+            this.pictureBox2.Size = new System.Drawing.Size(18, 19);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 29;
             this.pictureBox2.TabStop = false;
@@ -150,9 +165,10 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Proyecto_Reuniones.Properties.Resources.eliminar;
-            this.pictureBox1.Location = new System.Drawing.Point(240, 518);
+            this.pictureBox1.Location = new System.Drawing.Point(180, 421);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(44, 35);
+            this.pictureBox1.Size = new System.Drawing.Size(33, 28);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 28;
             this.pictureBox1.TabStop = false;
@@ -162,10 +178,10 @@
             this.btnCancelar.BackColor = System.Drawing.Color.LightSteelBlue;
             this.btnCancelar.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.ForeColor = System.Drawing.Color.Black;
-            this.btnCancelar.Location = new System.Drawing.Point(230, 510);
-            this.btnCancelar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnCancelar.Location = new System.Drawing.Point(172, 414);
+            this.btnCancelar.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancelar.Name = "btnCancelar";
-            this.btnCancelar.Size = new System.Drawing.Size(221, 51);
+            this.btnCancelar.Size = new System.Drawing.Size(166, 41);
             this.btnCancelar.TabIndex = 1;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = false;
@@ -174,9 +190,10 @@
             // pictureBox8
             // 
             this.pictureBox8.Image = global::Proyecto_Reuniones.Properties.Resources.mas;
-            this.pictureBox8.Location = new System.Drawing.Point(507, 518);
+            this.pictureBox8.Location = new System.Drawing.Point(380, 421);
+            this.pictureBox8.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox8.Name = "pictureBox8";
-            this.pictureBox8.Size = new System.Drawing.Size(44, 35);
+            this.pictureBox8.Size = new System.Drawing.Size(33, 28);
             this.pictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox8.TabIndex = 27;
             this.pictureBox8.TabStop = false;
@@ -185,10 +202,10 @@
             // 
             this.btnAgregarReunion.BackColor = System.Drawing.Color.CornflowerBlue;
             this.btnAgregarReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAgregarReunion.Location = new System.Drawing.Point(500, 510);
-            this.btnAgregarReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnAgregarReunion.Location = new System.Drawing.Point(375, 414);
+            this.btnAgregarReunion.Margin = new System.Windows.Forms.Padding(2);
             this.btnAgregarReunion.Name = "btnAgregarReunion";
-            this.btnAgregarReunion.Size = new System.Drawing.Size(221, 51);
+            this.btnAgregarReunion.Size = new System.Drawing.Size(166, 41);
             this.btnAgregarReunion.TabIndex = 26;
             this.btnAgregarReunion.Text = "Agregar Reunión";
             this.btnAgregarReunion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -197,10 +214,10 @@
             // 
             // btnAgregar
             // 
-            this.btnAgregar.Location = new System.Drawing.Point(827, 860);
-            this.btnAgregar.Margin = new System.Windows.Forms.Padding(5);
+            this.btnAgregar.Location = new System.Drawing.Point(620, 699);
+            this.btnAgregar.Margin = new System.Windows.Forms.Padding(4);
             this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(100, 28);
+            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
             this.btnAgregar.TabIndex = 23;
             this.btnAgregar.Text = "Agregar";
             this.btnAgregar.UseVisualStyleBackColor = true;
@@ -211,11 +228,10 @@
             this.dtpHoraFinalReunion.CustomFormat = "HH:mm";
             this.dtpHoraFinalReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpHoraFinalReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpHoraFinalReunion.Location = new System.Drawing.Point(576, 87);
-            this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4);
+            this.dtpHoraFinalReunion.Location = new System.Drawing.Point(432, 71);
             this.dtpHoraFinalReunion.Name = "dtpHoraFinalReunion";
             this.dtpHoraFinalReunion.ShowUpDown = true;
-            this.dtpHoraFinalReunion.Size = new System.Drawing.Size(145, 20);
+            this.dtpHoraFinalReunion.Size = new System.Drawing.Size(110, 20);
             this.dtpHoraFinalReunion.TabIndex = 25;
             this.dtpHoraFinalReunion.ValueChanged += new System.EventHandler(this.dtpHoraFinalReunion_ValueChanged_1);
             // 
@@ -225,11 +241,10 @@
             this.dtpHoraInicioReunion.CustomFormat = "HH:mm";
             this.dtpHoraInicioReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpHoraInicioReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpHoraInicioReunion.Location = new System.Drawing.Point(214, 87);
-            this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4);
+            this.dtpHoraInicioReunion.Location = new System.Drawing.Point(160, 71);
             this.dtpHoraInicioReunion.Name = "dtpHoraInicioReunion";
             this.dtpHoraInicioReunion.ShowUpDown = true;
-            this.dtpHoraInicioReunion.Size = new System.Drawing.Size(102, 20);
+            this.dtpHoraInicioReunion.Size = new System.Drawing.Size(78, 20);
             this.dtpHoraInicioReunion.TabIndex = 24;
             this.dtpHoraInicioReunion.Value = new System.DateTime(2026, 4, 29, 10, 48, 0, 0);
             this.dtpHoraInicioReunion.ValueChanged += new System.EventHandler(this.dtpHoraInicioReunion_ValueChanged_1);
@@ -238,7 +253,8 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(36, 198);
+            this.label10.Location = new System.Drawing.Point(27, 161);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(136, 12);
             this.label10.TabIndex = 20;
@@ -249,11 +265,11 @@
             this.clbListaInvestigadores.BackColor = System.Drawing.SystemColors.HighlightText;
             this.clbListaInvestigadores.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.clbListaInvestigadores.FormattingEnabled = true;
-            this.clbListaInvestigadores.Location = new System.Drawing.Point(38, 231);
-            this.clbListaInvestigadores.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.clbListaInvestigadores.Location = new System.Drawing.Point(28, 188);
+            this.clbListaInvestigadores.Margin = new System.Windows.Forms.Padding(2);
             this.clbListaInvestigadores.Name = "clbListaInvestigadores";
             this.clbListaInvestigadores.ScrollAlwaysVisible = true;
-            this.clbListaInvestigadores.Size = new System.Drawing.Size(356, 139);
+            this.clbListaInvestigadores.Size = new System.Drawing.Size(268, 109);
             this.clbListaInvestigadores.TabIndex = 19;
             this.clbListaInvestigadores.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbListaInvestigadores_ItemCheck);
             // 
@@ -261,17 +277,18 @@
             // 
             this.txtIdSemillero.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtIdSemillero.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIdSemillero.Location = new System.Drawing.Point(649, 414);
-            this.txtIdSemillero.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtIdSemillero.Location = new System.Drawing.Point(487, 336);
+            this.txtIdSemillero.Margin = new System.Windows.Forms.Padding(2);
             this.txtIdSemillero.Name = "txtIdSemillero";
-            this.txtIdSemillero.Size = new System.Drawing.Size(72, 20);
+            this.txtIdSemillero.Size = new System.Drawing.Size(55, 20);
             this.txtIdSemillero.TabIndex = 18;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(546, 417);
+            this.label9.Location = new System.Drawing.Point(410, 339);
+            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(71, 12);
             this.label9.TabIndex = 17;
@@ -284,27 +301,28 @@
             this.cboLugarReunion.FormattingEnabled = true;
             this.cboLugarReunion.Items.AddRange(new object[] {
             "Oficina de reuniones"});
-            this.cboLugarReunion.Location = new System.Drawing.Point(239, 136);
-            this.cboLugarReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cboLugarReunion.Location = new System.Drawing.Point(179, 110);
+            this.cboLugarReunion.Margin = new System.Windows.Forms.Padding(2);
             this.cboLugarReunion.Name = "cboLugarReunion";
-            this.cboLugarReunion.Size = new System.Drawing.Size(277, 19);
+            this.cboLugarReunion.Size = new System.Drawing.Size(209, 19);
             this.cboLugarReunion.TabIndex = 16;
             // 
             // txtIdLider
             // 
             this.txtIdLider.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtIdLider.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIdLider.Location = new System.Drawing.Point(456, 414);
-            this.txtIdLider.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtIdLider.Location = new System.Drawing.Point(342, 336);
+            this.txtIdLider.Margin = new System.Windows.Forms.Padding(2);
             this.txtIdLider.Name = "txtIdLider";
-            this.txtIdLider.Size = new System.Drawing.Size(72, 20);
+            this.txtIdLider.Size = new System.Drawing.Size(55, 20);
             this.txtIdLider.TabIndex = 15;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(415, 417);
+            this.label8.Location = new System.Drawing.Point(311, 339);
+            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(16, 12);
             this.label8.TabIndex = 14;
@@ -314,17 +332,18 @@
             // 
             this.txtLiderResponsable.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtLiderResponsable.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLiderResponsable.Location = new System.Drawing.Point(214, 411);
-            this.txtLiderResponsable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtLiderResponsable.Location = new System.Drawing.Point(160, 334);
+            this.txtLiderResponsable.Margin = new System.Windows.Forms.Padding(2);
             this.txtLiderResponsable.Name = "txtLiderResponsable";
-            this.txtLiderResponsable.Size = new System.Drawing.Size(170, 20);
+            this.txtLiderResponsable.Size = new System.Drawing.Size(128, 20);
             this.txtLiderResponsable.TabIndex = 13;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(62, 414);
+            this.label7.Location = new System.Drawing.Point(46, 336);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(109, 12);
             this.label7.TabIndex = 12;
@@ -334,7 +353,8 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(54, 144);
+            this.label6.Location = new System.Drawing.Point(40, 117);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(117, 12);
             this.label6.TabIndex = 10;
@@ -344,19 +364,20 @@
             // 
             this.txtMotivoReunion.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtMotivoReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtMotivoReunion.Location = new System.Drawing.Point(435, 230);
-            this.txtMotivoReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtMotivoReunion.Location = new System.Drawing.Point(326, 187);
+            this.txtMotivoReunion.Margin = new System.Windows.Forms.Padding(2);
             this.txtMotivoReunion.Multiline = true;
             this.txtMotivoReunion.Name = "txtMotivoReunion";
             this.txtMotivoReunion.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMotivoReunion.Size = new System.Drawing.Size(286, 149);
+            this.txtMotivoReunion.Size = new System.Drawing.Size(216, 122);
             this.txtMotivoReunion.TabIndex = 9;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(432, 198);
+            this.label5.Location = new System.Drawing.Point(324, 161);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(120, 12);
             this.label5.TabIndex = 8;
@@ -366,7 +387,8 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(355, 95);
+            this.label4.Location = new System.Drawing.Point(266, 77);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(168, 12);
             this.label4.TabIndex = 6;
@@ -377,7 +399,8 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(36, 93);
+            this.label3.Location = new System.Drawing.Point(27, 76);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(131, 12);
             this.label3.TabIndex = 4;
@@ -390,10 +413,10 @@
             this.dtpFechaReunion.CustomFormat = "yyyy-MM-dd";
             this.dtpFechaReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpFechaReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpFechaReunion.Location = new System.Drawing.Point(576, 42);
-            this.dtpFechaReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dtpFechaReunion.Location = new System.Drawing.Point(432, 34);
+            this.dtpFechaReunion.Margin = new System.Windows.Forms.Padding(2);
             this.dtpFechaReunion.Name = "dtpFechaReunion";
-            this.dtpFechaReunion.Size = new System.Drawing.Size(145, 20);
+            this.dtpFechaReunion.Size = new System.Drawing.Size(110, 20);
             this.dtpFechaReunion.TabIndex = 3;
             this.dtpFechaReunion.ValueChanged += new System.EventHandler(this.dtpFechaReunion_ValueChanged_1);
             // 
@@ -401,7 +424,8 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(448, 47);
+            this.label2.Location = new System.Drawing.Point(336, 38);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 12);
             this.label2.TabIndex = 2;
@@ -412,17 +436,18 @@
             // 
             this.txtIdReunion.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtIdReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIdReunion.Location = new System.Drawing.Point(216, 42);
-            this.txtIdReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtIdReunion.Location = new System.Drawing.Point(162, 34);
+            this.txtIdReunion.Margin = new System.Windows.Forms.Padding(2);
             this.txtIdReunion.Name = "txtIdReunion";
-            this.txtIdReunion.Size = new System.Drawing.Size(100, 20);
+            this.txtIdReunion.Size = new System.Drawing.Size(76, 20);
             this.txtIdReunion.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(112, 47);
+            this.label1.Location = new System.Drawing.Point(84, 38);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 0;
@@ -435,17 +460,19 @@
             this.panel1.Controls.Add(this.pictureBox4);
             this.panel1.Controls.Add(this.lblFechaHora);
             this.panel1.Controls.Add(this.lblNombreYApellido);
-            this.panel1.Location = new System.Drawing.Point(-4, -1);
+            this.panel1.Location = new System.Drawing.Point(-3, -1);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(790, 80);
+            this.panel1.Size = new System.Drawing.Size(592, 65);
             this.panel1.TabIndex = 18;
             // 
             // pictureBox3
             // 
             this.pictureBox3.Image = global::Proyecto_Reuniones.Properties.Resources.usuario;
-            this.pictureBox3.Location = new System.Drawing.Point(25, 10);
+            this.pictureBox3.Location = new System.Drawing.Point(19, 8);
+            this.pictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(47, 49);
+            this.pictureBox3.Size = new System.Drawing.Size(35, 40);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox3.TabIndex = 19;
             this.pictureBox3.TabStop = false;
@@ -456,9 +483,10 @@
             this.pictureBox4.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.pictureBox4.Image = global::Proyecto_Reuniones.Properties.Resources._;
-            this.pictureBox4.Location = new System.Drawing.Point(340, 20);
+            this.pictureBox4.Location = new System.Drawing.Point(255, 16);
+            this.pictureBox4.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(118, 39);
+            this.pictureBox4.Size = new System.Drawing.Size(88, 32);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox4.TabIndex = 18;
             this.pictureBox4.TabStop = false;
@@ -468,7 +496,8 @@
             this.lblFechaHora.AutoSize = true;
             this.lblFechaHora.Font = new System.Drawing.Font("Microsoft Tai Le", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFechaHora.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblFechaHora.Location = new System.Drawing.Point(590, 20);
+            this.lblFechaHora.Location = new System.Drawing.Point(442, 16);
+            this.lblFechaHora.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblFechaHora.Name = "lblFechaHora";
             this.lblFechaHora.Size = new System.Drawing.Size(144, 16);
             this.lblFechaHora.TabIndex = 7;
@@ -478,7 +507,8 @@
             // 
             this.lblNombreYApellido.AutoSize = true;
             this.lblNombreYApellido.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNombreYApellido.Location = new System.Drawing.Point(78, 27);
+            this.lblNombreYApellido.Location = new System.Drawing.Point(58, 22);
+            this.lblNombreYApellido.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblNombreYApellido.Name = "lblNombreYApellido";
             this.lblNombreYApellido.Size = new System.Drawing.Size(97, 12);
             this.lblNombreYApellido.TabIndex = 8;
@@ -492,16 +522,16 @@
             // 
             // FormAgregar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.BackgroundImage = global::Proyecto_Reuniones.Properties.Resources.fnd_grumos;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(780, 689);
+            this.ClientSize = new System.Drawing.Size(585, 560);
             this.ControlBox = false;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "FormAgregar";
             this.Load += new System.EventHandler(this.FormAgregar_Load);
             this.groupBox1.ResumeLayout(false);
@@ -556,5 +586,6 @@
         private System.Windows.Forms.PictureBox pictureBox6;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label lblMensajeError;
     }
 }

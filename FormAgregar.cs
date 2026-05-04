@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Proyecto_Reuniones
@@ -18,17 +17,17 @@ namespace Proyecto_Reuniones
 
         private DateTime valorAnteriorInicio;
         private DateTime valorAnteriorFin;
-        private int _idReunionGenerado; // ID real, no dependemos del TextBox al guardar
+        private int _idReunionGenerado;
 
         // ── Constantes de reglas de negocio ──────────────────────────────────
-        private const int HORA_MINIMA = 6;   // 06:00 a.m.
-        private const int HORA_MAXIMA = 22;  // 10:00 p.m.
-        private const int DURACION_MIN_MIN = 30;  // 30 minutos mínimo
-        private const int DURACION_MAX_HRS = 5;   // 5 horas máximo
-        private const int MOTIVO_MIN_CHARS = 10;  // mínimo de caracteres en el motivo
-        private const double RATIO_VOCALES_MIN = 0.20; // al menos 20% del texto deben ser vocales
+        private const int HORA_MINIMA = 6;
+        private const int HORA_MAXIMA = 22;
+        private const int DURACION_MIN_MIN = 30;
+        private const int DURACION_MAX_HRS = 5;
+        private const int MOTIVO_MIN_CHARS = 10;
+        private const int MOTIVO_MAX_CHARS = 500;
+        private const double RATIO_VOCALES_MIN = 0.20;
 
-        // Variable para controlar si estamos en modo edición (reutilizando el form) o creando nueva reunión.
         public bool modoEdicion = false;
         public BsonDocument reunionAEditar = null;
 
@@ -40,7 +39,10 @@ namespace Proyecto_Reuniones
             dtpFechaReunion.ValueChanged += dtpFechaReunion_ValueChanged;
             dtpHoraInicioReunion.ValueChanged += dtpHoraInicioReunion_ValueChanged;
             dtpHoraFinalReunion.ValueChanged += dtpHoraFinalReunion_ValueChanged;
-            cboLugarReunion.Leave += cboLugarReunion_Leave;   // validar al salir del campo
+            cboLugarReunion.Leave += cboLugarReunion_Leave;
+
+            // ── Evento en tiempo real para el label del motivo ──────────────
+            txtMotivoReunion.TextChanged += txtMotivoReunion_TextChanged;
         }
 
         // ════════════════════════════════════════════════════════════════════
@@ -52,14 +54,14 @@ namespace Proyecto_Reuniones
             ActualizarReloj();
             lblNombreYApellido.Text = usuarioLogueado.Nombre;
 
-            // ── Conexión a BD (en Load para poder mostrar error si falla) ───
             try
             {
                 var database = Conexion.ObtenerBaseDatos();
                 if (database == null)
                 {
                     MessageBox.Show(
-                        "No se pudo conectar a la base de datos.\nVerifique la conexión e intente de nuevo.",
+                        "No fue posible establecer conexión con la base de datos.\n" +
+                        "Verifique su conexión e intente de nuevo.",
                         "Error de conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                     return;
@@ -70,17 +72,16 @@ namespace Proyecto_Reuniones
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al conectar con la base de datos:\n{ex.Message}",
+                    $"Ocurrió un error al conectar con la base de datos:\n\n{ex.Message}",
                     "Error de conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
                 return;
             }
 
-            // ── Guard: el formulario no sirve sin usuario logueado ──────────
             if (usuarioLogueado == null)
             {
                 MessageBox.Show(
-                    "No hay una sesión activa. Por favor, inicie sesión nuevamente.",
+                    "No se encontró una sesión activa.\nPor favor, inicie sesión nuevamente.",
                     "Sesión inválida", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.Close();
                 return;
@@ -88,7 +89,6 @@ namespace Proyecto_Reuniones
 
             cargandoFormulario = true;
 
-            // Campos de solo lectura
             txtIdReunion.ReadOnly = true;
             txtLiderResponsable.ReadOnly = true;
             txtIdLider.ReadOnly = true;
@@ -96,8 +96,12 @@ namespace Proyecto_Reuniones
             txtIdReunion.BackColor = SystemColors.ControlLight;
             txtLiderResponsable.BackColor = SystemColors.ControlLight;
 
-            // Limitar caracteres en el motivo para evitar textos excesivamente largos
-            txtMotivoReunion.MaxLength = 200;
+            txtMotivoReunion.MaxLength = MOTIVO_MAX_CHARS;
+
+            // Estado inicial del label y botón
+            lblMensajeError.Text = string.Empty;
+            lblMensajeError.ForeColor = Color.Gray;
+            btnAgregarReunion.Enabled = true;
 
             try
             {
@@ -114,10 +118,9 @@ namespace Proyecto_Reuniones
                 CargarInvestigadores(usuarioLogueado.IdSemillero);
                 CargarLugares();
 
-                // Si estamos en modo edición, cargar los datos de la reunión a editar en los campos correspondientes
                 if (modoEdicion && reunionAEditar != null)
                 {
-                    txtIdReunion.Text = reunionAEditar["idReunion"].ToInt32().ToString(); // ← primera línea del bloque
+                    txtIdReunion.Text = reunionAEditar["idReunion"].ToInt32().ToString();
                     this.Text = "Editar reunión";
                     btnAgregarReunion.Text = "Modificar Reunión";
 
@@ -125,33 +128,23 @@ namespace Proyecto_Reuniones
                     cboLugarReunion.Text = reunionAEditar["lugarReunion"].AsString;
 
                     if (DateTime.TryParse(reunionAEditar["fechaReunion"].AsString, out DateTime fecha))
-                    {
                         dtpFechaReunion.Value = fecha;
-                    }
 
                     if (DateTime.TryParse(reunionAEditar["fechaReunion"].AsString + " " + reunionAEditar["horaInicio"].AsString, out DateTime ini) &&
                         DateTime.TryParse(reunionAEditar["fechaReunion"].AsString + " " + reunionAEditar["horaFin"].AsString, out DateTime fin))
-                    {
                         SincronizarHoras(ini, fin);
-                    }
 
                     if (reunionAEditar.Contains("investigadoresConvocados"))
                     {
                         var idsConvocados = new HashSet<int>();
-
                         foreach (var conv in reunionAEditar["investigadoresConvocados"].AsBsonArray)
-                        {
                             idsConvocados.Add(conv["idInvestigador"].ToInt32());
-                        }
 
                         for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
                         {
                             var inv = (ItemInvestigador)clbListaInvestigadores.Items[i];
-
                             if (idsConvocados.Contains(inv.Id))
-                            {
                                 clbListaInvestigadores.SetItemChecked(i, true);
-                            }
                         }
                     }
                 }
@@ -159,10 +152,47 @@ namespace Proyecto_Reuniones
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al cargar el formulario:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    $"Se produjo un error al cargar el formulario:\n\n{ex.Message}",
+                    "Error al cargar", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally { cargandoFormulario = false; }
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        //  LABEL EN TIEMPO REAL — MOTIVO
+        // ════════════════════════════════════════════════════════════════════
+        private void txtMotivoReunion_TextChanged(object sender, EventArgs e)
+        {
+            int len = txtMotivoReunion.Text.Trim().Length;
+
+            if (len == 0)
+            {
+                lblMensajeError.Text = string.Empty;
+                lblMensajeError.ForeColor = Color.Gray;
+                btnAgregarReunion.Enabled = true;
+                return;
+            }
+
+            if (len < MOTIVO_MIN_CHARS)
+            {
+                lblMensajeError.Text = $"⚠ Mínimo {MOTIVO_MIN_CHARS} caracteres  ({len}/{MOTIVO_MIN_CHARS})";
+                lblMensajeError.ForeColor = Color.OrangeRed;
+                btnAgregarReunion.Enabled = false;
+                return;
+            }
+
+            if (len > MOTIVO_MAX_CHARS)
+            {
+                lblMensajeError.Text = $"⚠ Máximo {MOTIVO_MAX_CHARS} caracteres  ({len}/{MOTIVO_MAX_CHARS})";
+                lblMensajeError.ForeColor = Color.OrangeRed;
+                btnAgregarReunion.Enabled = false;
+                return;
+            }
+
+            // Dentro del rango válido
+            lblMensajeError.Text = $"✔ {len}/{MOTIVO_MAX_CHARS} caracteres";
+            lblMensajeError.ForeColor = Color.SeaGreen;
+            btnAgregarReunion.Enabled = true;
         }
 
         // ════════════════════════════════════════════════════════════════════
@@ -172,22 +202,18 @@ namespace Proyecto_Reuniones
         {
             if (cargandoFormulario) return;
 
-            // ── VALIDACIÓN 1: No se puede agendar en domingo ────────────────
             if (dtpFechaReunion.Value.DayOfWeek == DayOfWeek.Sunday)
             {
                 cargandoFormulario = true;
                 MessageBox.Show(
-                    "No se puede agendar una reunión el domingo.",
-                    "Día no permitido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Las reuniones no pueden agendarse los domingos.\n" +
+                    "Por favor seleccione un día hábil (lunes a sábado).",
+                    "Día no permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                // Retrocedemos al día anterior que no sea domingo
                 DateTime anteriorValido = dtpFechaReunion.Value.AddDays(-1);
                 while (anteriorValido.DayOfWeek == DayOfWeek.Sunday)
                     anteriorValido = anteriorValido.AddDays(-1);
 
-                // Nunca retroceder antes de hoy
                 if (anteriorValido < DateTime.Today)
                     anteriorValido = DateTime.Today;
 
@@ -197,7 +223,6 @@ namespace Proyecto_Reuniones
             }
 
             DateTime ahora = DateTime.Now;
-
             if (dtpFechaReunion.Value.Date == ahora.Date)
             {
                 SincronizarHoras(ahora, ahora.AddMinutes(DURACION_MIN_MIN));
@@ -219,32 +244,31 @@ namespace Proyecto_Reuniones
             DateTime ahora = DateTime.Now;
             TimeSpan inicio = dtpHoraInicioReunion.Value.TimeOfDay;
 
-            // Mínimo 06:00
             if (inicio < new TimeSpan(HORA_MINIMA, 0, 0))
             {
-                RestaurarValor(dtpHoraInicioReunion, valorAnteriorInicio, "La hora de inicio mínima es 06:00 a.m.");
+                RestaurarValor(dtpHoraInicioReunion, valorAnteriorInicio,
+                    "El horario de reuniones comienza a las 6:00 a.m.\nNo es posible agendar antes de esa hora.");
                 return;
             }
 
-            // No puede ser en el pasado (solo si es hoy)
             if (dtpFechaReunion.Value.Date == ahora.Date && dtpHoraInicioReunion.Value < ahora.AddMinutes(-1))
             {
-                RestaurarValor(dtpHoraInicioReunion, ahora, "La hora de inicio ya pasó.");
+                RestaurarValor(dtpHoraInicioReunion, ahora,
+                    "La hora de inicio seleccionada ya ha pasado.\nPor favor elija una hora futura.");
                 return;
             }
 
-            // Debe ser menor a la hora de fin
             if (dtpHoraInicioReunion.Value >= dtpHoraFinalReunion.Value)
             {
-                RestaurarValor(dtpHoraInicioReunion, valorAnteriorInicio, "La hora de inicio debe ser menor a la hora de fin.");
+                RestaurarValor(dtpHoraInicioReunion, valorAnteriorInicio,
+                    "La hora de inicio debe ser anterior a la hora de finalización.");
                 return;
             }
 
-            // ── VALIDACIÓN 4: Duración mínima de 30 minutos ────────────────
             if ((dtpHoraFinalReunion.Value - dtpHoraInicioReunion.Value).TotalMinutes < DURACION_MIN_MIN)
             {
                 RestaurarValor(dtpHoraInicioReunion, valorAnteriorInicio,
-                    $"La reunión debe durar al menos {DURACION_MIN_MIN} minutos.");
+                    $"La duración mínima de una reunión es de {DURACION_MIN_MIN} minutos.\nAjuste el horario de inicio o finalización.");
                 return;
             }
 
@@ -255,35 +279,31 @@ namespace Proyecto_Reuniones
         {
             if (cargandoFormulario) return;
 
-            // ── VALIDACIÓN 7: Hora máxima 10:00 p.m. ───────────────────────
             if (dtpHoraFinalReunion.Value.TimeOfDay > new TimeSpan(HORA_MAXIMA, 0, 0))
             {
                 RestaurarValor(dtpHoraFinalReunion, valorAnteriorFin,
-                    "La hora de fin máxima es las 10:00 p.m.");
+                    "Las reuniones no pueden extenderse más allá de las 10:00 p.m.\nAjuste la hora de finalización.");
                 return;
             }
 
-            // Debe ser mayor al inicio
             if (dtpHoraFinalReunion.Value <= dtpHoraInicioReunion.Value)
             {
                 RestaurarValor(dtpHoraFinalReunion, valorAnteriorFin,
-                    "La hora de fin debe ser posterior al inicio.");
+                    "La hora de finalización debe ser posterior a la hora de inicio.");
                 return;
             }
 
-            // ── VALIDACIÓN 4: Duración mínima ──────────────────────────────
             if ((dtpHoraFinalReunion.Value - dtpHoraInicioReunion.Value).TotalMinutes < DURACION_MIN_MIN)
             {
                 RestaurarValor(dtpHoraFinalReunion, valorAnteriorFin,
-                    $"La reunión debe durar al menos {DURACION_MIN_MIN} minutos.");
+                    $"La duración mínima de una reunión es de {DURACION_MIN_MIN} minutos.\nAjuste el horario de inicio o finalización.");
                 return;
             }
 
-            // ── VALIDACIÓN 7: Duración máxima 5 horas ──────────────────────
             if ((dtpHoraFinalReunion.Value - dtpHoraInicioReunion.Value).TotalHours > DURACION_MAX_HRS)
             {
                 RestaurarValor(dtpHoraFinalReunion, valorAnteriorFin,
-                    $"La duración máxima de una reunión es de {DURACION_MAX_HRS} horas.");
+                    $"La duración máxima permitida para una reunión es de {DURACION_MAX_HRS} horas.\nAjuste la hora de finalización.");
                 return;
             }
 
@@ -303,7 +323,7 @@ namespace Proyecto_Reuniones
         private void RestaurarValor(DateTimePicker control, DateTime valor, string msg)
         {
             cargandoFormulario = true;
-            MessageBox.Show(msg, "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(msg, "Hora no válida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             control.Value = valor;
             cargandoFormulario = false;
         }
@@ -317,21 +337,21 @@ namespace Proyecto_Reuniones
             {
                 var inv = (ItemInvestigador)clbListaInvestigadores.Items[e.Index];
 
-                // ── VALIDACIÓN: Investigador con conflicto de horario ───────
                 if (ExisteConflictoInvestigador(
                         dtpFechaReunion.Value.Date,
                         dtpHoraInicioReunion.Value.TimeOfDay,
                         dtpHoraFinalReunion.Value.TimeOfDay,
                         new List<int> { inv.Id },
-                        out string motivoConflicto))
+                        out int idConflicto))
                 {
                     MessageBox.Show(
-                        $"❌ {inv.Nombre} ya tiene una reunión en ese horario:\n\"{motivoConflicto}\"\n\nNo se puede agregar.",
-                        "Conflicto de horario",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                        $"No es posible agregar a {inv.Nombre} como participante.\n\n" +
+                        $"Ya se encuentra convocado en la Reunión N.° {idConflicto},\n" +
+                        $"la cual se superpone con el horario seleccionado.\n\n" +
+                        $"Seleccione otro investigador o cambie el horario.",
+                        "Conflicto de participante", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    e.NewValue = CheckState.Unchecked; // desmarca automáticamente
+                    e.NewValue = CheckState.Unchecked;
                 }
             }
         }
@@ -355,7 +375,7 @@ namespace Proyecto_Reuniones
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"No se pudo generar el ID de reunión:\n{ex.Message}",
+                    $"No fue posible generar el ID de la reunión.\n\n{ex.Message}",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -380,81 +400,73 @@ namespace Proyecto_Reuniones
 
                 if (lista.Count == 0)
                     MessageBox.Show(
-                        "No hay investigadores registrados en su semillero.",
+                        "No se encontraron investigadores registrados en su semillero.\n" +
+                        "Contacte al administrador si cree que esto es un error.",
                         "Sin investigadores", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al cargar investigadores:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    $"No fue posible cargar la lista de investigadores.\n\n{ex.Message}",
+                    "Error al cargar investigadores", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // ════════════════════════════════════════════════════════════════════
         //  VALIDACIÓN DE MOTIVO (detecta texto sin sentido)
         // ════════════════════════════════════════════════════════════════════
-
-        /// <summary>
-        /// Retorna null si el motivo es válido, o un mensaje de error si no lo es.
-        /// Detecta: texto muy corto, sin vocales, secuencias repetitivas de teclas,
-        /// y palabras demasiado largas sin sentido.
-        /// </summary>
         private string ValidarMotivo(string motivo)
         {
             string texto = motivo.Trim();
 
-            // 1. Longitud mínima
             if (texto.Length < MOTIVO_MIN_CHARS)
                 return $"El motivo debe tener al menos {MOTIVO_MIN_CHARS} caracteres.";
 
+            if (texto.Length > MOTIVO_MAX_CHARS)
+                return $"El motivo no puede superar los {MOTIVO_MAX_CHARS} caracteres.";
+
             string textoLower = texto.ToLower();
 
-            // 2. Ratio de vocales: texto real siempre tiene vocales
             int vocales = textoLower.Count(c => "aeiouáéíóúü".Contains(c));
-            double ratioVocales = (double)vocales / texto.Length;
-            if (ratioVocales < RATIO_VOCALES_MIN)
-                return "El motivo no parece tener sentido. Por favor describa el propósito de la reunión.";
+            if ((double)vocales / texto.Length < RATIO_VOCALES_MIN)
+                return "El texto ingresado no parece ser una descripción válida.\n" +
+                       "Por favor describa el propósito de la reunión con claridad.";
 
-            // 3. Secuencias de caracteres repetidos excesivos (ej: "aaaaaaa", "jjjjjj")
-            int maxRepetidos = 0, contRepetidos = 1;
+            int maxRepetidos = 0, cont = 1;
             for (int i = 1; i < textoLower.Length; i++)
             {
-                if (textoLower[i] == textoLower[i - 1]) contRepetidos++;
-                else contRepetidos = 1;
-                if (contRepetidos > maxRepetidos) maxRepetidos = contRepetidos;
+                cont = textoLower[i] == textoLower[i - 1] ? cont + 1 : 1;
+                if (cont > maxRepetidos) maxRepetidos = cont;
             }
             if (maxRepetidos >= 4)
-                return "El motivo contiene caracteres repetidos excesivamente. Sea más descriptivo.";
+                return "El motivo contiene caracteres repetidos en exceso.\n" +
+                       "Sea más descriptivo sobre el propósito de la reunión.";
 
-            // 4. Palabras demasiado largas sin espacios (ej: "ahjsahsjahjs")
             var palabras = texto.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var palabra in palabras)
             {
-                // Palabra de más de 15 letras seguidas sin sentido de vocal/consonante
                 if (palabra.Length > 15)
-                    return "El motivo contiene palabras demasiado largas. Use un texto descriptivo normal.";
+                    return "El motivo contiene palabras demasiado largas o sin espacios.\n" +
+                           "Utilice un texto descriptivo normal.";
 
-                // Si la palabra tiene más de 6 letras y menos del 15% son vocales, es garba
                 if (palabra.Length > 6)
                 {
-                    int vPalabra = palabra.ToLower().Count(c => "aeiouáéíóúü".Contains(c));
-                    if ((double)vPalabra / palabra.Length < 0.15)
-                        return $"La palabra \"{palabra}\" no parece válida. Escriba un motivo real.";
+                    int vP = palabra.ToLower().Count(c => "aeiouáéíóúü".Contains(c));
+                    if ((double)vP / palabra.Length < 0.15)
+                        return $"La palabra \"{palabra}\" no parece ser válida.\n" +
+                               "Escriba un motivo que describa claramente la reunión.";
                 }
             }
 
-            // 5. Que haya al menos 2 palabras (no solo una tecla repetida)
             if (palabras.Length < 2)
                 return "El motivo debe contener al menos dos palabras.";
 
-            return null; // todo bien
+            return null;
         }
 
-        /// <summary>
-        /// Lee todos los lugarReunion únicos que ya existen en la colección
-        /// Reuniones y los carga en el ComboBox, ordenados alfabéticamente.
-        /// </summary>
+        // ════════════════════════════════════════════════════════════════════
+        //  GESTIÓN DE LUGARES
+        // ════════════════════════════════════════════════════════════════════
         private void CargarLugares()
         {
             try
@@ -478,16 +490,11 @@ namespace Proyecto_Reuniones
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al cargar los lugares:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    $"No fue posible cargar la lista de lugares.\n\n{ex.Message}",
+                    "Error al cargar lugares", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        /// <summary>
-        /// Si el lugar escrito no está en el ComboBox todavía, lo agrega en memoria
-        /// para esta sesión. La próxima vez que abra el form aparecerá solo,
-        /// porque ya quedó guardado en Reuniones cuando se guardó la reunión.
-        /// </summary>
         private void AgregarLugarAlComboSiEsNuevo(string lugar)
         {
             if (string.IsNullOrWhiteSpace(lugar)) return;
@@ -500,10 +507,6 @@ namespace Proyecto_Reuniones
                 cboLugarReunion.Items.Add(lugar);
         }
 
-        /// <summary>
-        /// Al salir del ComboBox: valida disponibilidad del lugar inmediatamente
-        /// y guarda el lugar nuevo si no existía.
-        /// </summary>
         private void cboLugarReunion_Leave(object sender, EventArgs e)
         {
             if (cargandoFormulario) return;
@@ -511,16 +514,17 @@ namespace Proyecto_Reuniones
             string lugar = cboLugarReunion.Text.Trim();
             if (string.IsNullOrWhiteSpace(lugar)) return;
 
-            // ── Validar disponibilidad al instante ──────────────────────────
             if (ExisteConflictoLugar(
                     dtpFechaReunion.Value.Date,
                     dtpHoraInicioReunion.Value.TimeOfDay,
                     dtpHoraFinalReunion.Value.TimeOfDay,
                     lugar,
-                    out string motivoConflicto))
+                    out int idOcupado))
             {
                 MessageBox.Show(
-                    $"❌ El lugar \"{lugar}\" ya está ocupado en ese horario\npor la reunión: \"{motivoConflicto}\".\n\nSeleccione otro lugar u otro horario.",
+                    $"El lugar \"{lugar}\" no está disponible en el horario seleccionado.\n\n" +
+                    $"Ya se encuentra reservado por la Reunión N.° {idOcupado}.\n\n" +
+                    $"Seleccione un lugar diferente o cambie el horario de la reunión.",
                     "Lugar no disponible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 cboLugarReunion.Text = string.Empty;
@@ -528,14 +532,16 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── Si pasó la validación, agregar al combo si es lugar nuevo ───
             AgregarLugarAlComboSiEsNuevo(lugar);
         }
 
+        // ════════════════════════════════════════════════════════════════════
+        //  CONFLICTOS (devuelven ID de la reunión, no el motivo)
+        // ════════════════════════════════════════════════════════════════════
         private bool ExisteConflictoInvestigador(DateTime fecha, TimeSpan tI, TimeSpan tF,
-                                                  List<int> ids, out string motivoConflicto)
+                                                  List<int> ids, out int idReunionConflicto)
         {
-            motivoConflicto = string.Empty;
+            idReunionConflicto = 0;
             try
             {
                 var filtro = Builders<BsonDocument>.Filter.Eq("fechaReunion", fecha.ToString("yyyy-MM-dd"));
@@ -543,22 +549,15 @@ namespace Proyecto_Reuniones
 
                 foreach (var doc in reuniones)
                 {
-                    if (!doc.Contains("investigadoresConvocados")) // Si la reunión no tiene investigadores convocados, no hay conflicto
-                    {
-                        continue;
-                    }
+                    if (!doc.Contains("investigadoresConvocados")) continue;
 
-                    // Extraemos solo los IDs de los investigadores convocados para esta reunión
+                    if (modoEdicion && reunionAEditar != null &&
+                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
+                        continue;
+
                     var idsDB = doc["investigadoresConvocados"]
                                     .AsBsonArray
                                     .Select(x => x.AsBsonDocument["idInvestigador"].AsInt32);
-
-                    // Excluimos la reunión actual para que no choque consigo misma
-                    if (modoEdicion && reunionAEditar != null &&
-                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
-                    {
-                        continue;
-                    }
 
                     if (ids.Any(id => idsDB.Contains(id)))
                     {
@@ -567,7 +566,7 @@ namespace Proyecto_Reuniones
 
                         if (tI < dbF && tF > dbI)
                         {
-                            motivoConflicto = doc["motivoReunion"].AsString;
+                            idReunionConflicto = doc["idReunion"].AsInt32;
                             return true;
                         }
                     }
@@ -576,16 +575,16 @@ namespace Proyecto_Reuniones
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al verificar conflictos de investigadores:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    $"Error al verificar conflictos de participantes:\n\n{ex.Message}",
+                    "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return false;
         }
 
         private bool ExisteConflictoLugar(DateTime fecha, TimeSpan tI, TimeSpan tF,
-                                           string lugar, out string motivoConflicto)
+                                           string lugar, out int idReunionConflicto)
         {
-            motivoConflicto = string.Empty;
+            idReunionConflicto = 0;
             try
             {
                 var filtro = Builders<BsonDocument>.Filter.And(
@@ -596,19 +595,16 @@ namespace Proyecto_Reuniones
 
                 foreach (var doc in reuniones)
                 {
+                    if (modoEdicion && reunionAEditar != null &&
+                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
+                        continue;
+
                     TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
                     TimeSpan dbF = TimeSpan.Parse(doc["horaFin"].AsString);
 
-                    // Excluimos la reunión actual para que no choque consigo misma
-                    if (modoEdicion && reunionAEditar != null &&
-                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
-                    {
-                        continue;
-                    }
-
                     if (tI < dbF && tF > dbI)
                     {
-                        motivoConflicto = doc["motivoReunion"].AsString;
+                        idReunionConflicto = doc["idReunion"].AsInt32;
                         return true;
                     }
                 }
@@ -616,102 +612,74 @@ namespace Proyecto_Reuniones
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error al verificar disponibilidad del lugar:\n{ex.Message}",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    $"Error al verificar la disponibilidad del lugar:\n\n{ex.Message}",
+                    "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return false;
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        // ════════════════════════════════════════════════════════════════════
-        //  LIMPIAR / CANCELAR
-        // ════════════════════════════════════════════════════════════════════
-        private void LimpiarFormulario()
-        {
-            cargandoFormulario = true;
-            txtMotivoReunion.Clear();
-            cboLugarReunion.SelectedIndex = -1;
-            DateTime ahora = DateTime.Now;
-            dtpFechaReunion.Value = ahora.Date;
-            SincronizarHoras(ahora, ahora.AddMinutes(DURACION_MIN_MIN));
-            for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
-                clbListaInvestigadores.SetItemChecked(i, false);
-            GenerarIdReunion(); // actualiza _idReunionGenerado y el TextBox
-            cargandoFormulario = false;
-        }
-
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-            DialogResult r = MessageBox.Show(
-                "¿Está seguro de que desea cancelar? Se perderán los datos ingresados.",
-                "Confirmar Cancelación",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (r == DialogResult.Yes)
-                this.Close();
-        }
-
 
         // ════════════════════════════════════════════════════════════════════
         //  GUARDAR REUNIÓN
         // ════════════════════════════════════════════════════════════════════
         private void btnAgregarReunion_Click(object sender, EventArgs e)
         {
-            // ── 1. Validar día domingo ──────────────────────────────────────
+            // ── 1. Domingo ─────────────────────────────────────────────────
             if (dtpFechaReunion.Value.DayOfWeek == DayOfWeek.Sunday)
             {
-                MessageBox.Show("No se puede agendar una reunión el domingo.",
+                MessageBox.Show(
+                    "Las reuniones no pueden agendarse los domingos.\nPor favor seleccione otro día.",
                     "Día no permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // ── 2. Motivo: mínimo de caracteres ────────────────────────────
-            if (string.IsNullOrWhiteSpace(txtMotivoReunion.Text) ||
-                txtMotivoReunion.Text.Trim().Length < MOTIVO_MIN_CHARS)
+            // ── 2. Motivo ──────────────────────────────────────────────────
+            string errorMotivo = ValidarMotivo(txtMotivoReunion.Text);
+            if (errorMotivo != null)
             {
-                MessageBox.Show(
-                    $"El motivo de la reunión debe tener al menos {MOTIVO_MIN_CHARS} caracteres.",
-                    "Datos insuficientes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(errorMotivo, "Motivo inválido",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtMotivoReunion.Focus();
                 return;
             }
 
-            // ── 3. Lugar seleccionado ───────────────────────────────────────
+            // ── 3. Lugar ───────────────────────────────────────────────────
             if (cboLugarReunion.SelectedIndex == -1 && string.IsNullOrWhiteSpace(cboLugarReunion.Text))
             {
-                MessageBox.Show("Por favor, seleccione o ingrese un lugar para la reunión.",
-                    "Datos Faltantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Debe indicar el lugar donde se realizará la reunión.\n" +
+                    "Seleccione una opción de la lista o escriba una nueva.",
+                    "Lugar requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cboLugarReunion.Focus();
                 return;
             }
 
-            // ── 4. Duración mínima 30 minutos ──────────────────────────────
+            // ── 4. Duración mínima ─────────────────────────────────────────
             double duracionMin = (dtpHoraFinalReunion.Value - dtpHoraInicioReunion.Value).TotalMinutes;
             if (duracionMin < DURACION_MIN_MIN)
             {
-                MessageBox.Show($"La reunión debe tener una duración mínima de {DURACION_MIN_MIN} minutos.",
-                    "Duración inválida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    $"La reunión debe tener una duración mínima de {DURACION_MIN_MIN} minutos.\n" +
+                    "Ajuste el horario de inicio o finalización.",
+                    "Duración insuficiente", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // ── 5. Duración máxima 5 horas ─────────────────────────────────
+            // ── 5. Duración máxima ─────────────────────────────────────────
             if (duracionMin > DURACION_MAX_HRS * 60)
             {
-                MessageBox.Show($"La duración máxima de una reunión es de {DURACION_MAX_HRS} horas.",
-                    "Duración inválida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    $"La duración máxima permitida para una reunión es de {DURACION_MAX_HRS} horas.\n" +
+                    "Ajuste el horario de finalización.",
+                    "Duración excedida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // ── 6. Al menos un investigador ────────────────────────────────
+            // ── 6. Al menos un participante ────────────────────────────────
             if (clbListaInvestigadores.CheckedItems.Count == 0)
             {
-                MessageBox.Show("Debe seleccionar al menos un investigador para la reunión.",
-                    "Sin Participantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Debe seleccionar al menos un investigador para convocar a la reunión.",
+                    "Sin participantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -722,17 +690,18 @@ namespace Proyecto_Reuniones
                     dtpHoraInicioReunion.Value.TimeOfDay,
                     dtpHoraFinalReunion.Value.TimeOfDay,
                     lugarSeleccionado,
-                    out string motivoLugar))
+                    out int idLugarOcupado))
             {
                 MessageBox.Show(
-                    $"❌ El lugar \"{lugarSeleccionado}\" ya está ocupado en ese horario por la reunión:\n\"{motivoLugar}\"",
+                    $"El lugar \"{lugarSeleccionado}\" no está disponible en el horario seleccionado.\n\n" +
+                    $"Ya se encuentra reservado por la Reunión N.° {idLugarOcupado}.\n\n" +
+                    $"Seleccione un lugar diferente o cambie el horario de la reunión.",
                     "Lugar no disponible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cboLugarReunion.Focus();
                 return;
             }
 
-            // ── 8. Re-verificar conflictos de todos los investigadores seleccionados ─
-            //    (por si el horario cambió después de marcarlos)
+            // ── 8. Conflicto de participantes ──────────────────────────────
             var idsSeleccionados = clbListaInvestigadores.CheckedItems
                                         .Cast<ItemInvestigador>()
                                         .Select(i => i.Id)
@@ -743,61 +712,38 @@ namespace Proyecto_Reuniones
                     dtpHoraInicioReunion.Value.TimeOfDay,
                     dtpHoraFinalReunion.Value.TimeOfDay,
                     idsSeleccionados,
-                    out string motivoInv))
+                    out int idInvOcupado))
             {
                 MessageBox.Show(
-                    $"❌ Uno o más investigadores seleccionados tienen conflicto de horario con:\n\"{motivoInv}\"\nRevise la lista.",
-                    "Conflicto de horario", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    $"Uno o más participantes seleccionados ya están convocados\n" +
+                    $"en la Reunión N.° {idInvOcupado} con el mismo horario.\n\n" +
+                    $"Revise la lista de participantes o cambie el horario.",
+                    "Conflicto de participantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             // ── Confirmación ───────────────────────────────────────────────
-            string mensajeConfirmacion;
-            string tituloConfirmacion;
+            string msgConf = modoEdicion
+                ? "¿Está seguro de que desea guardar los cambios en esta reunión?"
+                : "¿Está seguro de que desea agendar esta reunión?";
+            string titConf = modoEdicion ? "Confirmar edición" : "Confirmar guardado";
 
-            if (modoEdicion)
-            {
-                mensajeConfirmacion = "¿Está seguro de que desea guardar los cambios en esta reunión?";
-                tituloConfirmacion = "Confirmar Edición";
-            }
-            else
-            {
-                mensajeConfirmacion = "¿Está seguro de que desea agendar esta reunión?";
-                tituloConfirmacion = "Confirmar Guardado";
-            }
-
-            DialogResult resultado = MessageBox.Show(mensajeConfirmacion, tituloConfirmacion,
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (resultado != DialogResult.Yes) return;
+            if (MessageBox.Show(msgConf, titConf,
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                return;
 
             try
             {
                 BsonArray invs = new BsonArray();
-                foreach (ItemInvestigador investigador in clbListaInvestigadores.CheckedItems)
-                {
+                foreach (ItemInvestigador inv in clbListaInvestigadores.CheckedItems)
                     invs.Add(new BsonDocument {
-                        { "idInvestigador", investigador.Id },
+                        { "idInvestigador", inv.Id },
                         { "asistencia", "pendiente" }
                     });
-                }
 
-                var doc = new BsonDocument {
-                    { "idReunion",        _idReunionGenerado },
-                    { "fechaReunion",    dtpFechaReunion.Value.ToString("yyyy-MM-dd") },
-                    { "horaInicio",      dtpHoraInicioReunion.Value.ToString("HH:mm") },
-                    { "horaFin",         dtpHoraFinalReunion.Value.ToString("HH:mm") },
-                    { "motivoReunion",   txtMotivoReunion.Text.Trim() },
-                    { "lugarReunion",    lugarSeleccionado },
-                    { "idLider",         usuarioLogueado.IdUsuario },
-                    { "idInvestigadores", invs }
-                };
-
-                // Si estamos editando, actualizamos el documento existente. Si es nuevo, insertamos uno nuevo.
                 if (modoEdicion && reunionAEditar != null)
                 {
                     var filtroUpdate = Builders<BsonDocument>.Filter.Eq("idReunion", reunionAEditar["idReunion"].ToInt32());
-
                     var update = Builders<BsonDocument>.Update
                         .Set("fechaReunion", dtpFechaReunion.Value.ToString("yyyy-MM-dd"))
                         .Set("horaInicio", dtpHoraInicioReunion.Value.ToString("HH:mm"))
@@ -807,74 +753,89 @@ namespace Proyecto_Reuniones
                         .Set("investigadoresConvocados", invs);
 
                     reunionesCol.UpdateOne(filtroUpdate, update);
-                    MessageBox.Show("Reunión actualizada exitosamente.", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        "Los cambios de la reunión han sido guardados exitosamente.",
+                        "Reunión actualizada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
                 else
                 {
+                    var doc = new BsonDocument {
+                        { "idReunion",        _idReunionGenerado },
+                        { "fechaReunion",     dtpFechaReunion.Value.ToString("yyyy-MM-dd") },
+                        { "horaInicio",       dtpHoraInicioReunion.Value.ToString("HH:mm") },
+                        { "horaFin",          dtpHoraFinalReunion.Value.ToString("HH:mm") },
+                        { "motivoReunion",    txtMotivoReunion.Text.Trim() },
+                        { "lugarReunion",     lugarSeleccionado },
+                        { "idLider",          usuarioLogueado.IdUsuario },
+                        { "idInvestigadores", invs }
+                    };
+
                     reunionesCol.InsertOne(doc);
-                    MessageBox.Show("La reunión ha sido guardada exitosamente.", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        "La reunión ha sido agendada exitosamente.",
+                        "Reunión guardada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LimpiarFormulario();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al guardar: " + ex.Message,
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Ocurrió un error al guardar la reunión:\n\n{ex.Message}",
+                    "Error al guardar", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        // ════════════════════════════════════════════════════════════════════
+        //  LIMPIAR / CANCELAR
+        // ════════════════════════════════════════════════════════════════════
+        private void LimpiarFormulario()
+        {
+            cargandoFormulario = true;
+            txtMotivoReunion.Clear();
+            cboLugarReunion.SelectedIndex = -1;
+            cboLugarReunion.Text = string.Empty;  // ← vacía también lo escrito
+            lblMensajeError.Text = string.Empty;
+            lblMensajeError.ForeColor = Color.Gray;
+            btnAgregarReunion.Enabled = true;
+            DateTime ahora = DateTime.Now;
+            dtpFechaReunion.Value = ahora.Date;
+            SincronizarHoras(ahora, ahora.AddMinutes(DURACION_MIN_MIN));
+            for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
+                clbListaInvestigadores.SetItemChecked(i, false);
+            GenerarIdReunion();
+            cargandoFormulario = false;
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(
+                    "¿Está seguro de que desea cancelar?\nLos datos ingresados se perderán.",
+                    "Confirmar cancelación",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                this.Close();
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        //  RELOJ
+        // ════════════════════════════════════════════════════════════════════
         private void ActualizarReloj()
         {
             lblFechaHora.Text = DateTime.Now.ToString("yyyy/MM/dd  HH:mm:ss");
         }
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            ActualizarReloj();
-        }
-        private void dtpHoraFinalReunion_ValueChanged_1(object sender, EventArgs e)
-        {
+        private void timer1_Tick(object sender, EventArgs e) => ActualizarReloj();
 
-        }
-
-        private void dtpHoraInicioReunion_ValueChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dtpFechaReunion_ValueChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        
+        // ── Stubs vacíos generados por el diseñador ──────────────────────────
+        private void button1_Click(object sender, EventArgs e) { }
+        private void dtpHoraFinalReunion_ValueChanged_1(object sender, EventArgs e) { }
+        private void dtpHoraInicioReunion_ValueChanged_1(object sender, EventArgs e) { }
+        private void label4_Click(object sender, EventArgs e) { }
+        private void label3_Click(object sender, EventArgs e) { }
+        private void dtpFechaReunion_ValueChanged_1(object sender, EventArgs e) { }
+        private void label2_Click(object sender, EventArgs e) { }
+        private void groupBox1_Enter(object sender, EventArgs e) { }
+        private void pictureBox6_Click(object sender, EventArgs e) { }
+        private void label11_Click(object sender, EventArgs e) { }
     }
 
     // ════════════════════════════════════════════════════════════════════════
