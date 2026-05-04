@@ -48,6 +48,10 @@ namespace Proyecto_Reuniones
         // ════════════════════════════════════════════════════════════════════
         private void FormAgregar_Load(object sender, EventArgs e)
         {
+            timer1.Start();
+            ActualizarReloj();
+            lblNombreYApellido.Text = usuarioLogueado.Nombre;
+
             // ── Conexión a BD (en Load para poder mostrar error si falla) ───
             try
             {
@@ -822,6 +826,14 @@ namespace Proyecto_Reuniones
             }
         }
 
+        private void ActualizarReloj()
+        {
+            lblFechaHora.Text = DateTime.Now.ToString("yyyy/MM/dd  HH:mm:ss");
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            ActualizarReloj();
+        }
         private void dtpHoraFinalReunion_ValueChanged_1(object sender, EventArgs e)
         {
 
@@ -861,6 +873,8 @@ namespace Proyecto_Reuniones
         {
 
         }
+
+        
     }
 
     // ════════════════════════════════════════════════════════════════════════

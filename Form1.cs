@@ -19,6 +19,8 @@ namespace Proyecto_Reuniones
         public Form1()
         {
             InitializeComponent();
+            this.UseWaitCursor = false;
+            this.Cursor = Cursors.Arrow;
         }
 
         private void btnIniciarSesión_Click(object sender, EventArgs e)

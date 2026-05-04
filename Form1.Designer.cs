@@ -45,9 +45,10 @@
             this.lblMensajeCorreo.ForeColor = System.Drawing.Color.Red;
             this.lblMensajeCorreo.Location = new System.Drawing.Point(808, 244);
             this.lblMensajeCorreo.Name = "lblMensajeCorreo";
-            this.lblMensajeCorreo.Size = new System.Drawing.Size(10, 16);
+            this.lblMensajeCorreo.Size = new System.Drawing.Size(10, 13);
             this.lblMensajeCorreo.TabIndex = 6;
             this.lblMensajeCorreo.Text = " ";
+            this.lblMensajeCorreo.UseWaitCursor = true;
             // 
             // lblConexion
             // 
@@ -58,6 +59,7 @@
             this.lblConexion.Size = new System.Drawing.Size(13, 16);
             this.lblConexion.TabIndex = 5;
             this.lblConexion.Text = "  ";
+            this.lblConexion.UseWaitCursor = true;
             // 
             // btnIniciarSesión
             // 
@@ -79,9 +81,9 @@
             this.txtContraseña.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(253)))));
             this.txtContraseña.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtContraseña.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtContraseña.Location = new System.Drawing.Point(853, 298);
+            this.txtContraseña.Location = new System.Drawing.Point(843, 298);
             this.txtContraseña.Name = "txtContraseña";
-            this.txtContraseña.Size = new System.Drawing.Size(237, 17);
+            this.txtContraseña.Size = new System.Drawing.Size(237, 14);
             this.txtContraseña.TabIndex = 1;
             this.txtContraseña.UseSystemPasswordChar = true;
             this.txtContraseña.UseWaitCursor = true;
@@ -92,12 +94,13 @@
             this.btnSalir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSalir.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSalir.ForeColor = System.Drawing.Color.White;
-            this.btnSalir.Location = new System.Drawing.Point(968, 581);
+            this.btnSalir.Location = new System.Drawing.Point(853, 597);
             this.btnSalir.Name = "btnSalir";
             this.btnSalir.Size = new System.Drawing.Size(198, 48);
             this.btnSalir.TabIndex = 2;
             this.btnSalir.Text = "Salir de la app";
             this.btnSalir.UseVisualStyleBackColor = false;
+            this.btnSalir.UseWaitCursor = true;
             this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
             // 
             // txtCorreo
@@ -105,10 +108,11 @@
             this.txtCorreo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(243)))), ((int)(((byte)(253)))));
             this.txtCorreo.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtCorreo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCorreo.Location = new System.Drawing.Point(853, 211);
+            this.txtCorreo.Location = new System.Drawing.Point(843, 214);
             this.txtCorreo.Name = "txtCorreo";
-            this.txtCorreo.Size = new System.Drawing.Size(237, 17);
+            this.txtCorreo.Size = new System.Drawing.Size(237, 14);
             this.txtCorreo.TabIndex = 0;
+            this.txtCorreo.UseWaitCursor = true;
             this.txtCorreo.TextChanged += new System.EventHandler(this.txtCorreo_TextChanged);
             // 
             // Form1
@@ -125,6 +129,7 @@
             this.Controls.Add(this.btnIniciarSesión);
             this.Controls.Add(this.txtCorreo);
             this.Controls.Add(this.txtContraseña);
+            this.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             this.DoubleBuffered = true;
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

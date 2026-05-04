@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
@@ -62,6 +63,7 @@
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.lblFechaHora = new System.Windows.Forms.Label();
             this.lblNombreYApellido = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -213,7 +215,7 @@
             this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4);
             this.dtpHoraFinalReunion.Name = "dtpHoraFinalReunion";
             this.dtpHoraFinalReunion.ShowUpDown = true;
-            this.dtpHoraFinalReunion.Size = new System.Drawing.Size(145, 23);
+            this.dtpHoraFinalReunion.Size = new System.Drawing.Size(145, 20);
             this.dtpHoraFinalReunion.TabIndex = 25;
             this.dtpHoraFinalReunion.ValueChanged += new System.EventHandler(this.dtpHoraFinalReunion_ValueChanged_1);
             // 
@@ -227,7 +229,7 @@
             this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4);
             this.dtpHoraInicioReunion.Name = "dtpHoraInicioReunion";
             this.dtpHoraInicioReunion.ShowUpDown = true;
-            this.dtpHoraInicioReunion.Size = new System.Drawing.Size(102, 23);
+            this.dtpHoraInicioReunion.Size = new System.Drawing.Size(102, 20);
             this.dtpHoraInicioReunion.TabIndex = 24;
             this.dtpHoraInicioReunion.Value = new System.DateTime(2026, 4, 29, 10, 48, 0, 0);
             this.dtpHoraInicioReunion.ValueChanged += new System.EventHandler(this.dtpHoraInicioReunion_ValueChanged_1);
@@ -238,7 +240,7 @@
             this.label10.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.Location = new System.Drawing.Point(36, 198);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(159, 15);
+            this.label10.Size = new System.Drawing.Size(136, 12);
             this.label10.TabIndex = 20;
             this.label10.Text = "Agregar Investigadores";
             // 
@@ -251,7 +253,7 @@
             this.clbListaInvestigadores.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.clbListaInvestigadores.Name = "clbListaInvestigadores";
             this.clbListaInvestigadores.ScrollAlwaysVisible = true;
-            this.clbListaInvestigadores.Size = new System.Drawing.Size(356, 148);
+            this.clbListaInvestigadores.Size = new System.Drawing.Size(356, 139);
             this.clbListaInvestigadores.TabIndex = 19;
             this.clbListaInvestigadores.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbListaInvestigadores_ItemCheck);
             // 
@@ -262,7 +264,7 @@
             this.txtIdSemillero.Location = new System.Drawing.Point(649, 414);
             this.txtIdSemillero.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtIdSemillero.Name = "txtIdSemillero";
-            this.txtIdSemillero.Size = new System.Drawing.Size(72, 23);
+            this.txtIdSemillero.Size = new System.Drawing.Size(72, 20);
             this.txtIdSemillero.TabIndex = 18;
             // 
             // label9
@@ -271,7 +273,7 @@
             this.label9.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.Location = new System.Drawing.Point(546, 417);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(87, 15);
+            this.label9.Size = new System.Drawing.Size(71, 12);
             this.label9.TabIndex = 17;
             this.label9.Text = "ID Semillero";
             // 
@@ -285,7 +287,7 @@
             this.cboLugarReunion.Location = new System.Drawing.Point(239, 136);
             this.cboLugarReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cboLugarReunion.Name = "cboLugarReunion";
-            this.cboLugarReunion.Size = new System.Drawing.Size(277, 23);
+            this.cboLugarReunion.Size = new System.Drawing.Size(277, 19);
             this.cboLugarReunion.TabIndex = 16;
             // 
             // txtIdLider
@@ -295,7 +297,7 @@
             this.txtIdLider.Location = new System.Drawing.Point(456, 414);
             this.txtIdLider.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtIdLider.Name = "txtIdLider";
-            this.txtIdLider.Size = new System.Drawing.Size(72, 23);
+            this.txtIdLider.Size = new System.Drawing.Size(72, 20);
             this.txtIdLider.TabIndex = 15;
             // 
             // label8
@@ -304,7 +306,7 @@
             this.label8.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.Location = new System.Drawing.Point(415, 417);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(21, 15);
+            this.label8.Size = new System.Drawing.Size(16, 12);
             this.label8.TabIndex = 14;
             this.label8.Text = "ID";
             // 
@@ -315,7 +317,7 @@
             this.txtLiderResponsable.Location = new System.Drawing.Point(214, 411);
             this.txtLiderResponsable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtLiderResponsable.Name = "txtLiderResponsable";
-            this.txtLiderResponsable.Size = new System.Drawing.Size(170, 23);
+            this.txtLiderResponsable.Size = new System.Drawing.Size(170, 20);
             this.txtLiderResponsable.TabIndex = 13;
             // 
             // label7
@@ -324,7 +326,7 @@
             this.label7.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.Location = new System.Drawing.Point(62, 414);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(127, 15);
+            this.label7.Size = new System.Drawing.Size(109, 12);
             this.label7.TabIndex = 12;
             this.label7.Text = "Líder Responsable";
             // 
@@ -334,7 +336,7 @@
             this.label6.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(54, 144);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(135, 15);
+            this.label6.Size = new System.Drawing.Size(117, 12);
             this.label6.TabIndex = 10;
             this.label6.Text = "Lugar de la Reunión";
             // 
@@ -356,7 +358,7 @@
             this.label5.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(432, 198);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(140, 15);
+            this.label5.Size = new System.Drawing.Size(120, 12);
             this.label5.TabIndex = 8;
             this.label5.Text = "Motivo de la Reunión";
             // 
@@ -366,7 +368,7 @@
             this.label4.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(355, 95);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(196, 15);
+            this.label4.Size = new System.Drawing.Size(168, 12);
             this.label4.TabIndex = 6;
             this.label4.Text = "Hora de Finalización Reunión";
             this.label4.Click += new System.EventHandler(this.label4_Click);
@@ -377,7 +379,7 @@
             this.label3.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(36, 93);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(153, 15);
+            this.label3.Size = new System.Drawing.Size(131, 12);
             this.label3.TabIndex = 4;
             this.label3.Text = "Hora de inicio Reunión";
             this.label3.Click += new System.EventHandler(this.label3_Click);
@@ -391,7 +393,7 @@
             this.dtpFechaReunion.Location = new System.Drawing.Point(576, 42);
             this.dtpFechaReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dtpFechaReunion.Name = "dtpFechaReunion";
-            this.dtpFechaReunion.Size = new System.Drawing.Size(145, 23);
+            this.dtpFechaReunion.Size = new System.Drawing.Size(145, 20);
             this.dtpFechaReunion.TabIndex = 3;
             this.dtpFechaReunion.ValueChanged += new System.EventHandler(this.dtpFechaReunion_ValueChanged_1);
             // 
@@ -401,7 +403,7 @@
             this.label2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(448, 47);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(103, 15);
+            this.label2.Size = new System.Drawing.Size(89, 12);
             this.label2.TabIndex = 2;
             this.label2.Text = "Fecha Reunión";
             this.label2.Click += new System.EventHandler(this.label2_Click);
@@ -413,7 +415,7 @@
             this.txtIdReunion.Location = new System.Drawing.Point(216, 42);
             this.txtIdReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtIdReunion.Name = "txtIdReunion";
-            this.txtIdReunion.Size = new System.Drawing.Size(100, 23);
+            this.txtIdReunion.Size = new System.Drawing.Size(100, 20);
             this.txtIdReunion.TabIndex = 1;
             // 
             // label1
@@ -422,7 +424,7 @@
             this.label1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(112, 47);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 15);
+            this.label1.Size = new System.Drawing.Size(65, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "ID Reunión";
             // 
@@ -468,7 +470,7 @@
             this.lblFechaHora.ForeColor = System.Drawing.Color.Gainsboro;
             this.lblFechaHora.Location = new System.Drawing.Point(590, 20);
             this.lblFechaHora.Name = "lblFechaHora";
-            this.lblFechaHora.Size = new System.Drawing.Size(173, 19);
+            this.lblFechaHora.Size = new System.Drawing.Size(144, 16);
             this.lblFechaHora.TabIndex = 7;
             this.lblFechaHora.Text = "dd/mm/yyyy - hh/mm/ss";
             // 
@@ -478,9 +480,15 @@
             this.lblNombreYApellido.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblNombreYApellido.Location = new System.Drawing.Point(78, 27);
             this.lblNombreYApellido.Name = "lblNombreYApellido";
-            this.lblNombreYApellido.Size = new System.Drawing.Size(115, 15);
+            this.lblNombreYApellido.Size = new System.Drawing.Size(97, 12);
             this.lblNombreYApellido.TabIndex = 8;
             this.lblNombreYApellido.Text = "Nombre Apellido";
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // FormAgregar
             // 
@@ -547,5 +555,6 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox6;
         private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.Timer timer1;
     }
 }

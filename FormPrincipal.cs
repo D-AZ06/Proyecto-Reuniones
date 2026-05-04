@@ -24,7 +24,6 @@ namespace Proyecto_Reuniones
             InitializeComponent();
             datosUsuario = datos;
             ConfigurarInterfaz();
-            cboEstadoReunion.SelectedIndex = 0;
         }
 
         private void FormPrincipal_Load(object sender, EventArgs e)
@@ -92,11 +91,8 @@ namespace Proyecto_Reuniones
                 new KeyValuePair<string, string>("Motivo", "motivoReunion"),
                 new KeyValuePair<string, string>("Lugar", "lugarReunion"),
                 new KeyValuePair<string, string>("Nombre investigador", "investigadoresConvocados"),
+                new KeyValuePair<string, string>("Estado de la reunión", "estadoReunion") // NUEVO
             };
-
-            cboFiltro.DataSource = opciones;
-            cboFiltro.DisplayMember = "Key";
-            cboFiltro.ValueMember = "Value";
 
             if (datosUsuario.Rol == "Investigador")
             {
@@ -112,17 +108,18 @@ namespace Proyecto_Reuniones
 
 
                 // Pero sí puede filtrar por su asistencia
-                cboAsistencia.Items.AddRange(new[] { "Todas", "pendiente", "confirmado", "rechazado", "conflicto" });
-                cboAsistencia.SelectedIndex = 0;
+                opciones.Add(new KeyValuePair<string, string>("Mi Asistencia", "asistenciaReunion")); // NUEVO
             }
             else
             {
-                // El líder NO necesita el filtro de asistencia ni el botón de confirmar
-                cboAsistencia.Visible = false; cboAsistencia.Enabled = false;
                 btnConfirmarAsistencia.Visible = false; btnConfirmarAsistencia.Enabled = false;
-                lbl_confirmarAsistencia.Visible=false;
                 icono_asistencia.Visible = false;
             }
+
+            cboFiltro.DataSource = null; // Limpiamos por si acaso
+            cboFiltro.DataSource = opciones;
+            cboFiltro.DisplayMember = "Key";
+            cboFiltro.ValueMember = "Value";
         }
 
         // ══════════════════════════════════════════════════════════════
@@ -402,8 +399,6 @@ namespace Proyecto_Reuniones
 
             var (reuniones, nombrePorId) = await ObtenerReunionesYUsuarios(ObtenerFiltroPorRol());
 
-            reuniones = AplicarFiltrosActivos(reuniones, idUsuario);
-
             if (reuniones.Count == 0)
             {
                 dataGridView1.DataSource = null;
@@ -414,22 +409,6 @@ namespace Proyecto_Reuniones
             }
 
             if (reuniones.Count > 0) DiseñarGrid();
-        }
-
-
-        /// Aplica los filtros de estado y (si corresponde) de asistencia sobre la lista de reuniones.
-        private List<BsonDocument> AplicarFiltrosActivos(List<BsonDocument> reuniones, int idUsuario)
-        {
-            string estadoElegido = cboEstadoReunion.SelectedItem.ToString();
-            reuniones = FiltrarPorEstado(reuniones, estadoElegido);
-
-            if (datosUsuario.Rol == "Investigador")
-            {
-                string asistenciaElegida = cboAsistencia.SelectedItem.ToString();
-                reuniones = FiltrarPorAsistencia(reuniones, asistenciaElegida, idUsuario);
-            }
-
-            return reuniones;
         }
 
         //══════════════════════════════════════════════════════════════
@@ -537,6 +516,8 @@ namespace Proyecto_Reuniones
             dataGridView1.ScrollBars = ScrollBars.Both;
             dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightSteelBlue;
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+
+
         }
 
         private List<BsonDocument> FiltrarPorEstado(List<BsonDocument> reuniones, string estado)
@@ -590,6 +571,20 @@ namespace Proyecto_Reuniones
             {
                 controlActual = new TextBox();
             }
+            else if (campo == "estadoReunion")
+            {
+                ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+                cbo.Items.AddRange(new[] { "Todas", "Programadas", "En ejecución", "Finalizadas", "Desconocido" });
+                cbo.SelectedIndex = 0;
+                controlActual = cbo;
+            }
+            else if (campo == "asistenciaReunion")
+            {
+                ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+                cbo.Items.AddRange(new[] { "Todas", "pendiente", "confirmado", "rechazado", "conflicto" });
+                cbo.SelectedIndex = 0;
+                controlActual = cbo;
+            }
             else
             {
                 return;
@@ -637,15 +632,16 @@ namespace Proyecto_Reuniones
         // ── Ver reuniones ────────────────────────────────────────────────────
         private async void btnVerReunion_Click(object sender, EventArgs e)
         {
-            cboFiltro.Text = "";
-            dataGridView1.DataSource = null;
+            cboFiltro.SelectedIndex = 0;
+            if (panelFiltro.Controls.Count > 0) panelFiltro.Controls.Clear();
+
+            await RecargarGrid();
 
             try
             {
                 int idUsuario = Convert.ToInt32(datosUsuario.IdUsuario);
 
                 var (reuniones, nombrePorId) = await ObtenerReunionesYUsuarios(ObtenerFiltroPorRol());
-                reuniones = AplicarFiltrosActivos(reuniones, idUsuario);
 
                 if (reuniones.Count == 0)
                 {
@@ -680,6 +676,7 @@ namespace Proyecto_Reuniones
 
             try
             {
+                // 1. Validaciones iniciales
                 if (cboFiltro.SelectedIndex <= 0)
                 {
                     MessageBox.Show("Selecciona un campo para filtrar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -687,7 +684,6 @@ namespace Proyecto_Reuniones
                 }
 
                 string valorFiltro = ObtenerValorDelControl().Trim();
-
                 if (string.IsNullOrEmpty(valorFiltro))
                 {
                     MessageBox.Show("Ingresa un valor para buscar.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -697,6 +693,37 @@ namespace Proyecto_Reuniones
                 int idUsuario = Convert.ToInt32(datosUsuario.IdUsuario);
                 string campo = cboFiltro.SelectedValue.ToString();
 
+                // 2. LÓGICA ESPECIAL PARA CAMPOS CALCULADOS (Estado y Asistencia)
+                // Como estos no están en la BD o requieren lógica interna, filtramos en memoria.
+                if (campo == "estadoReunion" || campo == "asistenciaReunion")
+                {
+                    // Traemos TODAS las reuniones del usuario según su rol
+                    var (reunionesBase, nombres) = await ObtenerReunionesYUsuarios(ObtenerFiltroPorRol());
+
+                    List<BsonDocument> filtradas;
+                    if (campo == "estadoReunion")
+                    {
+                        // Usamos tu método FiltrarPorEstado que calcula el estado al vuelo
+                        filtradas = FiltrarPorEstado(reunionesBase, valorFiltro);
+                    }
+                    else // campo == "asistenciaReunion"
+                    {
+                        // Usamos tu método FiltrarPorAsistencia
+                        filtradas = FiltrarPorAsistencia(reunionesBase, valorFiltro, idUsuario);
+                    }
+
+                    if (filtradas.Count == 0)
+                    {
+                        MessageBox.Show("No se encontraron reuniones con ese criterio.", "Sin resultados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    dataGridView1.DataSource = ConstruirTabla(filtradas, nombres);
+                    DiseñarGrid();
+                    return; // Termina aquí para no ejecutar la consulta de MongoDB de abajo
+                }
+
+                // 3. LÓGICA PARA CAMPOS DE BASE DE DATOS (ID, Lugar, Motivo, etc.)
                 FilterDefinition<BsonDocument> filtroCampo;
 
                 if (campo == "idReunion")
@@ -712,7 +739,6 @@ namespace Proyecto_Reuniones
                 {
                     var db = Conexion.ObtenerBaseDatos();
                     var colUsuarios = db.GetCollection<BsonDocument>("Usuarios");
-
                     var filtroNombre = Builders<BsonDocument>.Filter.Regex("nombreUsuario", new BsonRegularExpression(valorFiltro, "i"));
                     var usuariosEncontrados = await colUsuarios.Find(filtroNombre).ToListAsync();
 
@@ -723,7 +749,6 @@ namespace Proyecto_Reuniones
                     }
 
                     var idsEncontrados = usuariosEncontrados.Select(u => u["idUsuario"].ToInt32()).ToList();
-
                     filtroCampo = Builders<BsonDocument>.Filter.ElemMatch<BsonValue>(
                         "investigadoresConvocados",
                         new BsonDocument("idInvestigador", new BsonDocument("$in", new BsonArray(idsEncontrados)))
@@ -734,9 +759,12 @@ namespace Proyecto_Reuniones
                     filtroCampo = Builders<BsonDocument>.Filter.Regex(campo, new BsonRegularExpression(valorFiltro, "i"));
                 }
 
+                // Combinamos el filtro de seguridad (por rol) con el filtro de búsqueda
                 var filtroFinal = Builders<BsonDocument>.Filter.And(ObtenerFiltroPorRol(), filtroCampo);
                 var (reuniones, nombrePorId) = await ObtenerReunionesYUsuarios(filtroFinal);
-                reuniones = AplicarFiltrosActivos(reuniones, idUsuario);
+
+                // IMPORTANTE: Aquí NO aplicamos AplicarFiltrosActivos() porque el usuario 
+                // ya eligió un parámetro específico para buscar.
 
                 if (reuniones.Count == 0)
                 {
