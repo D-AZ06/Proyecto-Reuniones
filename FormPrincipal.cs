@@ -1079,5 +1079,17 @@ namespace Proyecto_Reuniones
         {
 
         }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+       
     }
 }
