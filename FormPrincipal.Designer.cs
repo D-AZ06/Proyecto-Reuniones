@@ -32,11 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPrincipal));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.cboFiltro = new System.Windows.Forms.ComboBox();
             this.panelFiltro = new System.Windows.Forms.Panel();
-            this.label5 = new System.Windows.Forms.Label();
             this.btn_Consultar_con_parametros = new System.Windows.Forms.Button();
             this.btnVerReunion = new System.Windows.Forms.Button();
             this.btnAtras = new System.Windows.Forms.Button();
@@ -62,7 +62,6 @@
             this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
-            this.panelFiltro.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
@@ -93,6 +92,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(249)))), ((int)(((byte)(254)))));
+            this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.cboFiltro);
@@ -106,12 +106,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.ForeColor = System.Drawing.Color.Navy;
+            this.label5.Location = new System.Drawing.Point(288, 44);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 15);
+            this.label5.TabIndex = 29;
+            this.label5.Text = "Datos";
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.Navy;
-            this.label4.Location = new System.Drawing.Point(28, 52);
+            this.label4.Location = new System.Drawing.Point(28, 44);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(78, 15);
             this.label4.TabIndex = 28;
@@ -143,7 +154,7 @@
             "motivoReunion",
             "lugarReunion",
             "idInvestigadores"});
-            this.cboFiltro.Location = new System.Drawing.Point(31, 70);
+            this.cboFiltro.Location = new System.Drawing.Point(31, 62);
             this.cboFiltro.Name = "cboFiltro";
             this.cboFiltro.Size = new System.Drawing.Size(206, 25);
             this.cboFiltro.TabIndex = 4;
@@ -151,24 +162,13 @@
             // 
             // panelFiltro
             // 
-            this.panelFiltro.Controls.Add(this.label5);
+            this.panelFiltro.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelFiltro.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelFiltro.Location = new System.Drawing.Point(274, 45);
+            this.panelFiltro.Location = new System.Drawing.Point(291, 62);
             this.panelFiltro.Name = "panelFiltro";
-            this.panelFiltro.Size = new System.Drawing.Size(290, 50);
+            this.panelFiltro.Size = new System.Drawing.Size(290, 29);
             this.panelFiltro.TabIndex = 3;
             this.panelFiltro.Paint += new System.Windows.Forms.PaintEventHandler(this.panelFiltro_Paint);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.ForeColor = System.Drawing.Color.Navy;
-            this.label5.Location = new System.Drawing.Point(3, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(45, 15);
-            this.label5.TabIndex = 29;
-            this.label5.Text = "Datos";
             // 
             // btn_Consultar_con_parametros
             // 
@@ -176,7 +176,7 @@
             this.btn_Consultar_con_parametros.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_Consultar_con_parametros.Font = new System.Drawing.Font("Arial Rounded MT Bold", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btn_Consultar_con_parametros.ForeColor = System.Drawing.Color.White;
-            this.btn_Consultar_con_parametros.Location = new System.Drawing.Point(610, 44);
+            this.btn_Consultar_con_parametros.Location = new System.Drawing.Point(628, 48);
             this.btn_Consultar_con_parametros.Name = "btn_Consultar_con_parametros";
             this.btn_Consultar_con_parametros.Size = new System.Drawing.Size(221, 51);
             this.btn_Consultar_con_parametros.TabIndex = 2;
@@ -256,6 +256,7 @@
             this.lblNombreYApellido.Size = new System.Drawing.Size(148, 20);
             this.lblNombreYApellido.TabIndex = 8;
             this.lblNombreYApellido.Text = "Nombre Apellido";
+            this.lblNombreYApellido.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblNombreYApellido.Click += new System.EventHandler(this.lblNombreYApellido_Click);
             // 
             // btnConfirmarAsistencia
@@ -294,7 +295,7 @@
             this.btnEliminarReunion.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEliminarReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEliminarReunion.ForeColor = System.Drawing.Color.Red;
-            this.btnEliminarReunion.Location = new System.Drawing.Point(693, 179);
+            this.btnEliminarReunion.Location = new System.Drawing.Point(662, 179);
             this.btnEliminarReunion.Name = "btnEliminarReunion";
             this.btnEliminarReunion.Size = new System.Drawing.Size(221, 51);
             this.btnEliminarReunion.TabIndex = 15;
@@ -370,6 +371,7 @@
             this.lblRol.Size = new System.Drawing.Size(25, 15);
             this.lblRol.TabIndex = 27;
             this.lblRol.Text = "rol";
+            this.lblRol.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pictureBox8
             // 
@@ -449,11 +451,11 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Arial Rounded MT Bold", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Arial Rounded MT Bold", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Navy;
-            this.label3.Location = new System.Drawing.Point(301, 209);
+            this.label3.Location = new System.Drawing.Point(306, 198);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(104, 21);
+            this.label3.Size = new System.Drawing.Size(159, 32);
             this.label3.TabIndex = 27;
             this.label3.Text = "Reuniones";
             // 
@@ -477,8 +479,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.panelFiltro.ResumeLayout(false);
-            this.panelFiltro.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);

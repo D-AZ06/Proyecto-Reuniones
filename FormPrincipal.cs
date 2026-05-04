@@ -102,7 +102,7 @@ namespace Proyecto_Reuniones
                 btnEliminarReunion.Enabled = false; btnEliminarReunion.Visible = false;
                 btnModificarReunion.Enabled = false; btnModificarReunion.Visible = false;
 
-                pictureBox4.Visible = false;
+                //pictureBox4.Visible = false;
                 pictureBox6.Visible = false;
                 pictureBox8.Visible = false;
 
@@ -587,11 +587,13 @@ namespace Proyecto_Reuniones
             }
             else
             {
+                panelFiltro.BorderStyle = BorderStyle.FixedSingle;
                 return;
             }
 
             controlActual.Dock = DockStyle.Fill;
             panelFiltro.Controls.Add(controlActual);
+            panelFiltro.BorderStyle = BorderStyle.None;
         }
 
         // Lee el valor del control dinámico que se usa para filtrar búsquedas.
@@ -982,7 +984,6 @@ namespace Proyecto_Reuniones
         {
             FormReporte formReporte = new FormReporte(this.datosUsuario);
             formReporte.Show();
-            this.Hide();
         }
 
         // ══════════════════════════════════════════════════════════════

@@ -183,5 +183,16 @@ namespace Proyecto_Reuniones
 
             return tabla;
         }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            var resultado = MessageBox.Show("¿Desea cerrar el reporte?", "Confirmar",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (resultado == DialogResult.Yes)
+            {
+                this.Close();
+            }
+        }
     }
 }
