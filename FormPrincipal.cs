@@ -12,7 +12,7 @@ namespace Proyecto_Reuniones
 {
     public partial class FormPrincipal : Form
     {
-        private DatosUsuario datosUsuario;
+        public DatosUsuario datosUsuario;
         private Control controlActual;
 
         // ══════════════════════════════════════════════════════════════
@@ -945,6 +945,7 @@ namespace Proyecto_Reuniones
         {
             FormAgregar formAgregar = new FormAgregar(this.datosUsuario);
             formAgregar.Show();
+            this.Hide();
         }
 
         // ── Eliminar reunión (solo Líder) ────────────────────────────────────
