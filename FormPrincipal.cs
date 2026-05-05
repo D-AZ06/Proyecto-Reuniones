@@ -574,7 +574,7 @@ namespace Proyecto_Reuniones
             else if (campo == "estadoReunion")
             {
                 ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
-                cbo.Items.AddRange(new[] { "Todas", "Programadas", "En ejecución", "Finalizadas", "Desconocido" });
+                cbo.Items.AddRange(new[] {"Programadas", "En ejecución", "Finalizadas", "Desconocido" });
                 cbo.SelectedIndex = 0;
                 controlActual = cbo;
             }
@@ -636,8 +636,6 @@ namespace Proyecto_Reuniones
         {
             cboFiltro.SelectedIndex = 0;
             if (panelFiltro.Controls.Count > 0) panelFiltro.Controls.Clear();
-
-            await RecargarGrid();
 
             try
             {
@@ -791,6 +789,9 @@ namespace Proyecto_Reuniones
 
             int idReunionSeleccionada = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
             string opcionElegida = MostrarDialogoOpcionAsistencia(idReunionSeleccionada);
+            string estado = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+
+            if (ReunionNoPuedeModificarse(estado, "confirmar asistencia para")) return;
 
             if (string.IsNullOrEmpty(opcionElegida)) return;
 

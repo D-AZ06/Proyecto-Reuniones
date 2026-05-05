@@ -632,7 +632,19 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 2. Motivo ──────────────────────────────────────────────────
+            // ── 2. Si es hoy, la hora de inicio no puede haber pasado ──────────
+            if (dtpFechaReunion.Value.Date == DateTime.Today &&
+                dtpHoraInicioReunion.Value.TimeOfDay < DateTime.Now.TimeOfDay)
+            {
+                MessageBox.Show(
+                    "La hora de inicio seleccionada ya ha pasado.\n" +
+                    "Por favor elija una hora futura.",
+                    "Hora no válida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                dtpHoraInicioReunion.Focus();
+                return;
+            }
+
+            // ── 3. Motivo ──────────────────────────────────────────────────
             string errorMotivo = ValidarMotivo(txtMotivoReunion.Text);
             if (errorMotivo != null)
             {
@@ -642,7 +654,7 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 3. Lugar ───────────────────────────────────────────────────
+            // ── 4. Lugar ───────────────────────────────────────────────────
             if (cboLugarReunion.SelectedIndex == -1 && string.IsNullOrWhiteSpace(cboLugarReunion.Text))
             {
                 MessageBox.Show(
@@ -653,7 +665,7 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 4. Duración mínima ─────────────────────────────────────────
+            // ── 5. Duración mínima ─────────────────────────────────────────
             double duracionMin = (dtpHoraFinalReunion.Value - dtpHoraInicioReunion.Value).TotalMinutes;
             if (duracionMin < DURACION_MIN_MIN)
             {
@@ -664,7 +676,7 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 5. Duración máxima ─────────────────────────────────────────
+            // ── 6. Duración máxima ─────────────────────────────────────────
             if (duracionMin > DURACION_MAX_HRS * 60)
             {
                 MessageBox.Show(
@@ -674,7 +686,7 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 6. Al menos un participante ────────────────────────────────
+            // ── 7. Al menos un participante ────────────────────────────────
             if (clbListaInvestigadores.CheckedItems.Count == 0)
             {
                 MessageBox.Show(
@@ -683,7 +695,7 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 7. Disponibilidad del lugar ────────────────────────────────
+            // ── 8. Disponibilidad del lugar ────────────────────────────────
             string lugarSeleccionado = cboLugarReunion.Text.Trim();
             if (ExisteConflictoLugar(
                     dtpFechaReunion.Value.Date,
@@ -701,7 +713,7 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 8. Conflicto de participantes ──────────────────────────────
+            // ── 9. Conflicto de participantes ──────────────────────────────
             var idsSeleccionados = clbListaInvestigadores.CheckedItems
                                         .Cast<ItemInvestigador>()
                                         .Select(i => i.Id)
@@ -768,7 +780,7 @@ namespace Proyecto_Reuniones
                         { "motivoReunion",    txtMotivoReunion.Text.Trim() },
                         { "lugarReunion",     lugarSeleccionado },
                         { "idLider",          usuarioLogueado.IdUsuario },
-                        { "idInvestigadores", invs }
+                        { "investigadoresConvocados", invs }
                     };
 
                     reunionesCol.InsertOne(doc);
@@ -777,6 +789,8 @@ namespace Proyecto_Reuniones
                         "Reunión guardada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LimpiarFormulario();
                 }
+
+                this.Close();
             }
             catch (Exception ex)
             {

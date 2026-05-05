@@ -83,8 +83,6 @@
             this.groupBox1.Controls.Add(this.pictureBox6);
             this.groupBox1.Controls.Add(this.pictureBox5);
             this.groupBox1.Controls.Add(this.pictureBox2);
-            this.groupBox1.Controls.Add(this.pictureBox1);
-            this.groupBox1.Controls.Add(this.btnCancelar);
             this.groupBox1.Controls.Add(this.pictureBox8);
             this.groupBox1.Controls.Add(this.btnAgregarReunion);
             this.groupBox1.Controls.Add(this.btnAgregar);
@@ -167,7 +165,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Proyecto_Reuniones.Properties.Resources.eliminar;
-            this.pictureBox1.Location = new System.Drawing.Point(240, 518);
+            this.pictureBox1.Location = new System.Drawing.Point(554, 688);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(44, 34);
@@ -180,7 +178,7 @@
             this.btnCancelar.BackColor = System.Drawing.Color.LightSteelBlue;
             this.btnCancelar.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancelar.ForeColor = System.Drawing.Color.Black;
-            this.btnCancelar.Location = new System.Drawing.Point(229, 510);
+            this.btnCancelar.Location = new System.Drawing.Point(547, 680);
             this.btnCancelar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(221, 50);
@@ -192,7 +190,7 @@
             // pictureBox8
             // 
             this.pictureBox8.Image = global::Proyecto_Reuniones.Properties.Resources.mas;
-            this.pictureBox8.Location = new System.Drawing.Point(507, 518);
+            this.pictureBox8.Location = new System.Drawing.Point(282, 499);
             this.pictureBox8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox8.Name = "pictureBox8";
             this.pictureBox8.Size = new System.Drawing.Size(44, 34);
@@ -204,7 +202,7 @@
             // 
             this.btnAgregarReunion.BackColor = System.Drawing.Color.CornflowerBlue;
             this.btnAgregarReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAgregarReunion.Location = new System.Drawing.Point(500, 510);
+            this.btnAgregarReunion.Location = new System.Drawing.Point(275, 491);
             this.btnAgregarReunion.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnAgregarReunion.Name = "btnAgregarReunion";
             this.btnAgregarReunion.Size = new System.Drawing.Size(221, 50);
@@ -217,7 +215,7 @@
             // btnAgregar
             // 
             this.btnAgregar.Location = new System.Drawing.Point(827, 860);
-            this.btnAgregar.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.btnAgregar.Margin = new System.Windows.Forms.Padding(5);
             this.btnAgregar.Name = "btnAgregar";
             this.btnAgregar.Size = new System.Drawing.Size(100, 28);
             this.btnAgregar.TabIndex = 23;
@@ -231,7 +229,7 @@
             this.dtpHoraFinalReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpHoraFinalReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpHoraFinalReunion.Location = new System.Drawing.Point(576, 87);
-            this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dtpHoraFinalReunion.Margin = new System.Windows.Forms.Padding(4);
             this.dtpHoraFinalReunion.Name = "dtpHoraFinalReunion";
             this.dtpHoraFinalReunion.ShowUpDown = true;
             this.dtpHoraFinalReunion.Size = new System.Drawing.Size(145, 23);
@@ -245,7 +243,7 @@
             this.dtpHoraInicioReunion.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpHoraInicioReunion.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpHoraInicioReunion.Location = new System.Drawing.Point(213, 87);
-            this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dtpHoraInicioReunion.Margin = new System.Windows.Forms.Padding(4);
             this.dtpHoraInicioReunion.Name = "dtpHoraInicioReunion";
             this.dtpHoraInicioReunion.ShowUpDown = true;
             this.dtpHoraInicioReunion.Size = new System.Drawing.Size(103, 23);
@@ -519,10 +517,12 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.BackgroundImage = global::Proyecto_Reuniones.Properties.Resources.fnd_grumos;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(780, 689);
+            this.ClientSize = new System.Drawing.Size(780, 742);
             this.ControlBox = false;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.btnCancelar);
             this.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
             this.Name = "FormAgregar";
             this.Load += new System.EventHandler(this.FormAgregar_Load);
