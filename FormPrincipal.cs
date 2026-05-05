@@ -944,8 +944,8 @@ namespace Proyecto_Reuniones
         private void btnAgregarReunión_Click(object sender, EventArgs e)
         {
             FormAgregar formAgregar = new FormAgregar(this.datosUsuario);
-            formAgregar.Show();
-            this.Hide();
+            formAgregar.ShowDialog();
+   
         }
 
         // ── Eliminar reunión (solo Líder) ────────────────────────────────────
@@ -1102,6 +1102,11 @@ namespace Proyecto_Reuniones
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

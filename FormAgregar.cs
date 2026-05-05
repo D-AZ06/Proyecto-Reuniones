@@ -915,11 +915,8 @@ namespace Proyecto_Reuniones
 
             if (resultado == DialogResult.OK) 
             {
-                    FormPrincipal frmAgregar = new FormPrincipal;
-                    frmAgregar.ShowDialog();
                     this.Close();
                
-                
             }
         }
 
