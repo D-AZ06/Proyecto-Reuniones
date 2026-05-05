@@ -652,46 +652,6 @@ namespace Proyecto_Reuniones
             return false;
         }
 
-        // Revisa si el líder ya tiene otra reunión que se superponga en ese horario,
-        // buscándolo como idLider dentro de la colección Reuniones.
-        private bool ExisteConflictoLider(DateTime fecha, TimeSpan tI, TimeSpan tF,
-                                           int idLider, out int idReunionConflicto)
-        {
-            idReunionConflicto = 0;
-            try
-            {
-                var filtro = Builders<BsonDocument>.Filter.And(
-                    Builders<BsonDocument>.Filter.Eq("fechaReunion", fecha.ToString("yyyy-MM-dd")),
-                    Builders<BsonDocument>.Filter.Eq("idLider", idLider)
-                );
-                var reuniones = reunionesCol.Find(filtro).ToList();
-
-                foreach (var doc in reuniones)
-                {
-                    // En modo edición ignoramos la reunión que estamos modificando
-                    if (modoEdicion && reunionAEditar != null &&
-                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
-                        continue;
-
-                    TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
-                    TimeSpan dbF = TimeSpan.Parse(doc["horaFin"].AsString);
-
-                    if (tI < dbF && tF > dbI)
-                    {
-                        idReunionConflicto = doc["idReunion"].AsInt32;
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Error al verificar la disponibilidad del líder:\n\n{ex.Message}",
-                    "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return false;
-        }
-
         // Botón principal. Corre todas las validaciones en orden antes de guardar.
         // Si algo falla, corta y avisa sin continuar. Al final, si es nueva reunión
         // limpia el formulario; si es edición, cierra el form.
@@ -793,30 +753,6 @@ namespace Proyecto_Reuniones
                     $"en la Reunión N.° {idInvOcupado} con el mismo horario.\n\n" +
                     $"Revise la lista de participantes o cambie el horario.",
                     "Conflicto de participantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // ── 9. Disponibilidad del líder ────────────────────────────────
-            // El líder también puede estar convocado en otra reunión en ese horario,
-            // ya sea como investigador o como líder de otra reunión.
-            if (ExisteConflictoInvestigador(
-                    dtpFechaReunion.Value.Date,
-                    dtpHoraInicioReunion.Value.TimeOfDay,
-                    dtpHoraFinalReunion.Value.TimeOfDay,
-                    new List<int> { usuarioLogueado.IdUsuario },
-                    out int idLiderOcupado) ||
-                ExisteConflictoLider(
-                    dtpFechaReunion.Value.Date,
-                    dtpHoraInicioReunion.Value.TimeOfDay,
-                    dtpHoraFinalReunion.Value.TimeOfDay,
-                    usuarioLogueado.IdUsuario,
-                    out idLiderOcupado))
-            {
-                MessageBox.Show(
-                    $"Usted ya tiene una reunión agendada en ese horario (Reunión N.° {idLiderOcupado}).\n\n" +
-                    $"No es posible ser líder de dos reuniones simultáneas.\n" +
-                    $"Seleccione una fecha u horario diferente.",
-                    "Líder no disponible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -928,7 +864,7 @@ namespace Proyecto_Reuniones
         private void timer1_Tick(object sender, EventArgs e) => ActualizarReloj();
 
         // ── Stubs vacíos generados por el diseñador ──────────────────────────
-        
+        private void button1_Click(object sender, EventArgs e) { }
         private void dtpHoraFinalReunion_ValueChanged_1(object sender, EventArgs e) { }
         private void dtpHoraInicioReunion_ValueChanged_1(object sender, EventArgs e) { }
         private void label4_Click(object sender, EventArgs e) { }
@@ -936,7 +872,7 @@ namespace Proyecto_Reuniones
         private void dtpFechaReunion_ValueChanged_1(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
         private void groupBox1_Enter(object sender, EventArgs e) { }
-       
+        private void pictureBox6_Click(object sender, EventArgs e) { }
         private void label11_Click(object sender, EventArgs e) { }
     }
 
