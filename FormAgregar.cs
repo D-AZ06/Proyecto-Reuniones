@@ -847,7 +847,8 @@ namespace Proyecto_Reuniones
                         .Set("horaFin", dtpHoraFinalReunion.Value.ToString("HH:mm"))
                         .Set("motivoReunion", txtMotivoReunion.Text.Trim())
                         .Set("lugarReunion", lugarSeleccionado)
-                        .Set("investigadoresConvocados", invs);
+                        .Set("investigadoresConvocados", invs)
+                        .Set("estadoReunion", "Reprogramado");
 
                     reunionesCol.UpdateOne(filtroUpdate, update);
                     MessageBox.Show(
@@ -865,7 +866,8 @@ namespace Proyecto_Reuniones
                         { "motivoReunion",             txtMotivoReunion.Text.Trim() },
                         { "lugarReunion",              lugarSeleccionado },
                         { "idLider",                   usuarioLogueado.IdUsuario },
-                        { "investigadoresConvocados",  invs }  // nombre consistente con el resto del sistema
+                        { "investigadoresConvocados",  invs },  // nombre consistente con el resto del sistema
+                        { "estadoReunion", "" }
                     };
 
                     reunionesCol.InsertOne(doc);
@@ -874,6 +876,7 @@ namespace Proyecto_Reuniones
                         "Reunión guardada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LimpiarFormulario();
                 }
+                this.Close();
             }
             catch (Exception ex)
             {

@@ -299,7 +299,7 @@
             this.btnEliminarReunion.Name = "btnEliminarReunion";
             this.btnEliminarReunion.Size = new System.Drawing.Size(221, 51);
             this.btnEliminarReunion.TabIndex = 15;
-            this.btnEliminarReunion.Text = "   🗑️    Eliminar      ";
+            this.btnEliminarReunion.Text = "   🗑️    Cancelar Reunión ";
             this.btnEliminarReunion.UseVisualStyleBackColor = false;
             this.btnEliminarReunion.Click += new System.EventHandler(this.btnEliminarReunion_Click);
             // 

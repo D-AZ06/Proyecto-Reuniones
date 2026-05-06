@@ -98,7 +98,8 @@ namespace Proyecto_Reuniones
                 new KeyValuePair<string, string>("Motivo", "motivoReunion"),
                 new KeyValuePair<string, string>("Lugar", "lugarReunion"),
                 new KeyValuePair<string, string>("Nombre investigador", "investigadoresConvocados"),
-                new KeyValuePair<string, string>("Estado de la reunión", "estadoReunion") // NUEVO
+                new KeyValuePair<string, string>("Estado reunión", "estadoReunion"), // NUEVO
+                new KeyValuePair<string, string>("Mes", "mes")
             };
 
             if (datosUsuario.Rol == "Investigador")
@@ -192,7 +193,19 @@ namespace Proyecto_Reuniones
         // "Programadas" | "En ejecución" | "Finalizadas" | "Desconocido"
         private string ObtenerEstadoReunion(BsonDocument reunion)
         {
-            // Intentamos parsear las fechas y horas. Si alguna es inválida, devolvemos "Desconocido".
+            // 1. Evitamos que se rompa: si no existe el campo "estadoReunion", usamos vacio ""
+            string estadoFijo;
+
+            if (reunion.Contains("estadoReunion"))
+            {
+                estadoFijo = reunion["estadoReunion"].AsString;
+            }
+            else
+            {
+                estadoFijo = "";
+            }
+
+            // Parseo de fechas (tu lógica original)
             bool inicioOk = DateTime.TryParse(reunion["fechaReunion"].AsString + " " + reunion["horaInicio"].AsString, out DateTime inicio);
             bool finOk = DateTime.TryParse(reunion["fechaReunion"].AsString + " " + reunion["horaFin"].AsString, out DateTime fin);
 
@@ -200,10 +213,23 @@ namespace Proyecto_Reuniones
 
             DateTime ahora = DateTime.Now;
 
-            // Lógica: si la hora actual es menor al inicio, está programada. Si está entre inicio y fin, está en ejecución. Si ya pasó el fin, está finalizada.
-            if (ahora < inicio) return "Programadas";
+            // 2. Prioridad máxima: Si ya pasó la hora de fin, siempre es Finalizada
+            if (ahora > fin) return "Finalizadas";
+
+            // 3. Prioridad media: Si está en ejecución, se muestra como tal
             if (ahora >= inicio && ahora <= fin) return "En ejecución";
-            return "Finalizadas";
+
+            // Si la hora actual es antes del inicio, pero faltan menos de 15 minutos
+            if (ahora < inicio && ahora >= inicio.AddMinutes(-15))
+            {
+                return "Por iniciar";
+            }
+
+            // 4. Prioridad para el futuro: Si es antes de que inicie y hay un estado especial, lo usamos
+            if (!string.IsNullOrEmpty(estadoFijo)) return estadoFijo;
+
+            // 5. Estado por defecto para el futuro
+            return "Programadas";
         }
 
         // Valida que una reunión pueda ser editada o eliminada según su estado.
@@ -408,6 +434,25 @@ namespace Proyecto_Reuniones
                 }
             }
 
+            else if (campo == "mes")
+            {
+                // Arreglo para traducir (el índice 1 es Enero, el 7 es Julio, etc.)
+                string[] nombresMeses = { "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+
+                foreach (var r in reunionesDelUsuario)
+                {
+                    string fechaCompleta = r["fechaReunion"].AsString; // Ej: "2026-07-15"
+                    if (fechaCompleta.Length >= 7)
+                    {
+                        string mesNumeroStr = fechaCompleta.Substring(5, 2); // Extrae "07"
+                        if (int.TryParse(mesNumeroStr, out int mesNum) && mesNum >= 1 && mesNum <= 12)
+                        {
+                            lista.Add(nombresMeses[mesNum]); // Agrega "Julio" a la lista
+                        }
+                    }
+                }
+            }
+
             // Eliminamos duplicados y ordenamos alfabéticamente antes de devolver la lista para mostrar en el combo
             return lista.Distinct().OrderBy(x => x).ToList();
         }
@@ -575,8 +620,24 @@ namespace Proyecto_Reuniones
             // (ComboBox para campos con opciones limitadas, DateTimePicker para fechas y horas, TextBox para texto libre)
             // y lo agregamos al panel de filtro. Para los campos que tienen opciones limitadas (ID, Lugar, Investigadores convocados)
             // traemos esas opciones desde la base de datos para poblar el ComboBox, facilitando la selección del usuario y evitando errores de tipeo.
+            
+            if (campo == "estadoReunion")
+            {
+                ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
 
-            if (campo == "idReunion" || campo == "lugarReunion" || campo == "investigadoresConvocados")
+                // Aquí es donde definimos qué palabras aparecen en el cuadrito de la derecha
+                // He quitado "Desconocido" y agregado las nuevas opciones:
+                cbo.Items.Add("Programadas");
+                cbo.Items.Add("Por iniciar");
+                cbo.Items.Add("En ejecución");
+                cbo.Items.Add("Finalizadas");
+                cbo.Items.Add("Reprogramado");
+                cbo.Items.Add("Cancelado");
+
+                cbo.SelectedIndex = 0; // Para que aparezca "Programadas" por defecto
+                controlActual = cbo;
+            }
+            else if (campo == "idReunion" || campo == "lugarReunion" || campo == "investigadoresConvocados")
             {
                 ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
                 var opciones = await ObtenerOpcionesDesdeBD(campo);
@@ -612,6 +673,19 @@ namespace Proyecto_Reuniones
                 ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
                 cbo.Items.AddRange(new[] { "Todas", "pendiente", "confirmado", "rechazado", "conflicto" });
                 cbo.SelectedIndex = 0;
+                controlActual = cbo;
+            }
+            else if (campo == "mes")
+            {
+                ComboBox cbo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+
+                // Lista fija con todos los meses del año
+                cbo.Items.AddRange(new string[] {
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                });
+
+                cbo.SelectedIndex = 0; // Selecciona Enero por defecto
                 controlActual = cbo;
             }
             else
@@ -786,6 +860,40 @@ namespace Proyecto_Reuniones
                         new BsonDocument("idInvestigador", new BsonDocument("$in", new BsonArray(idsEncontrados)))
                     ); // Filtramos las reuniones que tengan en su lista de investigadores convocados a alguno de los IDs encontrados para el nombre ingresado
                 }
+                else if (campo == "estadoReunion")
+                {
+                    // Si el usuario busca los estados que se guardan físicamente en la BD
+                    if (valorFiltro == "Reprogramado" || valorFiltro == "Cancelado")
+                    {
+                        filtroCampo = Builders<BsonDocument>.Filter.Eq("estadoReunion", valorFiltro);
+                    }
+                    else
+                    {
+                        // Para Programadas, En ejecución o Finalizadas, como dependen del tiempo,
+                        // lo ideal es traer las reuniones que NO tengan un estado especial.
+                        filtroCampo = Builders<BsonDocument>.Filter.Or(
+                            Builders<BsonDocument>.Filter.Eq("estadoReunion", ""),
+                            Builders<BsonDocument>.Filter.Exists("estadoReunion", false)
+                        );
+                    }
+                }
+                else if (campo == "mes")
+                {
+                    string[] nombresMeses = { "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+
+                    int indiceMes = Array.IndexOf(nombresMeses, valorFiltro);
+
+                    if (indiceMes > 0)
+                    {
+                        string mesStr = indiceMes.ToString("D2");
+                        filtroCampo = Builders<BsonDocument>.Filter.Regex("fechaReunion", new BsonRegularExpression("-" + mesStr + "-"));
+                    }
+                    else
+                    {
+                        MessageBox.Show("Mes inválido.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
                 else // Para los demás campos de texto, aplicamos un filtro de regex para permitir búsquedas parciales e insensibles a mayúsculas/minúsculas
                 {
                     filtroCampo = Builders<BsonDocument>.Filter.Regex(campo, new BsonRegularExpression(valorFiltro, "i"));
@@ -951,35 +1059,60 @@ namespace Proyecto_Reuniones
         // ── Eliminar reunión (solo Líder) ────────────────────────────────────
         private async void btnEliminarReunion_Click(object sender, EventArgs e)
         {
+            // 1. Validar que haya una fila seleccionada
             if (ValidarSeleccionFila("eliminar")) return;
 
             int idReunion = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
-            string estado = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
+            string estadoActual = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
 
-            if (ReunionNoPuedeModificarse(estado, "eliminar")) return;
+            // 2. Usamos tu validación de estado (pero solo para ver si ya está Finalizada o en Ejecución)
+            if (ReunionNoPuedeModificarse(estadoActual, "eliminar")) return;
 
-            try
+            // Confirmación del usuario
+            DialogResult result = MessageBox.Show("¿Estás seguro de que deseas cancelar esta reunión?",
+                                                 "Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
-                if (await TieneInvestigadoresConfirmados(idReunion, "eliminar")) return;
-
-                var resultado = MessageBox.Show(
-                    $"¿Estás seguro de eliminar la reunión {idReunion}?",
-                    "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (resultado == DialogResult.Yes)
+                try
                 {
-                    var colReuniones = Conexion.ObtenerBaseDatos().GetCollection<BsonDocument>("Reuniones");
-                    await colReuniones.DeleteOneAsync(Builders<BsonDocument>.Filter.Eq("idReunion", idReunion));
+                    var db = Conexion.ObtenerBaseDatos();
+                    var colReuniones = db.GetCollection<BsonDocument>("Reuniones");
 
-                    MessageBox.Show("Reunión eliminada correctamente.", "Éxito",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // 3. ACTUALIZACIÓN 1: Cambiar estado de la reunión a "Cancelado"
+                    var filtroReunion = Builders<BsonDocument>.Filter.Eq("idReunion", idReunion);
+                    var updateReunion = Builders<BsonDocument>.Update.Set("estadoReunion", "Cancelado");
+
+                    await colReuniones.UpdateOneAsync(filtroReunion, updateReunion);
+
+                    // 4. ACTUALIZACIÓN 2: Cambiar la asistencia de todos los convocados a "En conflicto"
+                    // Buscamos la reunión para obtener la lista de investigadores
+                    var reunion = await colReuniones.Find(filtroReunion).FirstOrDefaultAsync();
+
+                    if (reunion != null && reunion.Contains("investigadoresConvocados"))
+                    {
+                        var convocados = reunion["investigadoresConvocados"].AsBsonArray;
+
+                        // Recorremos cada investigador para poner su estado en "En conflicto"
+                        for (int i = 0; i < convocados.Count; i++)
+                        {
+                            convocados[i].AsBsonDocument["estadoAsistencia"] = "En conflicto";
+                        }
+
+                        // Guardamos la lista actualizada de investigadores en la reunión
+                        await colReuniones.UpdateOneAsync(filtroReunion,
+                            Builders<BsonDocument>.Update.Set("investigadoresConvocados", convocados));
+                    }
+
+                    MessageBox.Show("La reunión ha sido cancelada y se ha notificado el conflicto de asistencia.",
+                                    "Reunión Cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     await RecargarGrid();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al eliminar: {ex.Message}", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cancelar la reunión: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -1004,6 +1137,18 @@ namespace Proyecto_Reuniones
                     .Find(Builders<BsonDocument>.Filter.Eq("idReunion", idReunion))
                     .FirstOrDefaultAsync();
 
+                // Validamos que la reunión no esté a menos de 2 horas de su inicio para permitir la edición
+                if (DateTime.TryParse(reunion["fechaReunion"].AsString + " " + reunion["horaInicio"].AsString, out DateTime inicio))
+                {
+                    // Si la hora actual + 2 horas es mayor a la hora de inicio, significa que falta menos de 2 horas
+                    if (DateTime.Now.AddHours(2) > inicio)
+                    {
+                        MessageBox.Show("No puedes modificar esta reunión. Solo se permite editar hasta 2 horas antes de su inicio.",
+                                        "Tiempo límite excedido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+
                 FormAgregar formAgregar = new FormAgregar(this.datosUsuario)
                 {
                     modoEdicion = true,
@@ -1023,7 +1168,7 @@ namespace Proyecto_Reuniones
         private void btnReporte_Click(object sender, EventArgs e)
         {
             FormReporte formReporte = new FormReporte(this.datosUsuario);
-            formReporte.Show();
+            formReporte.ShowDialog();
         }
 
         // ══════════════════════════════════════════════════════════════

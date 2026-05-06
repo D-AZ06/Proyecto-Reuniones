@@ -307,7 +307,7 @@
             // 
             this.txtLiderResponsable.BackColor = System.Drawing.SystemColors.HighlightText;
             this.txtLiderResponsable.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLiderResponsable.Location = new System.Drawing.Point(213, 411);
+            this.txtLiderResponsable.Location = new System.Drawing.Point(213, 414);
             this.txtLiderResponsable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtLiderResponsable.Name = "txtLiderResponsable";
             this.txtLiderResponsable.Size = new System.Drawing.Size(180, 23);
@@ -317,7 +317,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Arial Rounded MT Bold", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(61, 414);
+            this.label7.Location = new System.Drawing.Point(61, 417);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(127, 15);
             this.label7.TabIndex = 12;

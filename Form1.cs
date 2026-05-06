@@ -65,7 +65,7 @@ namespace Proyecto_Reuniones
                             IdSemillero = usuario["idSemillero"].AsInt32 // Obtenemos el ID del semillero desde la DB
                         };
 
-
+                        lblConexion.Text = "";
                         // Enviar a la pantalla principal
                         FormPrincipal frm = new FormPrincipal(datos);
                         frm.Show();
