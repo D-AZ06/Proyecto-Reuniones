@@ -193,42 +193,40 @@ namespace Proyecto_Reuniones
         // "Programadas" | "En ejecución" | "Finalizadas" | "Desconocido"
         private string ObtenerEstadoReunion(BsonDocument reunion)
         {
-            // 1. Evitamos que se rompa: si no existe el campo "estadoReunion", usamos vacio ""
-            string estadoFijo;
-
+            // 1. Obtener el estado guardado (si existe)
+            string estadoFijo = "";
             if (reunion.Contains("estadoReunion"))
             {
                 estadoFijo = reunion["estadoReunion"].AsString;
             }
-            else
-            {
-                estadoFijo = "";
-            }
 
-            // Parseo de fechas (tu lógica original)
-            bool inicioOk = DateTime.TryParse(reunion["fechaReunion"].AsString + " " + reunion["horaInicio"].AsString, out DateTime inicio);
-            bool finOk = DateTime.TryParse(reunion["fechaReunion"].AsString + " " + reunion["horaFin"].AsString, out DateTime fin);
+            if (estadoFijo == "Cancelado") return "Cancelado";
+
+            // 2. Parseo de fechas
+            bool inicioOk = DateTime.TryParse(
+                reunion["fechaReunion"].AsString + " " + reunion["horaInicio"].AsString,
+                out DateTime inicio);
+            bool finOk = DateTime.TryParse(
+                reunion["fechaReunion"].AsString + " " + reunion["horaFin"].AsString,
+                out DateTime fin);
 
             if (!inicioOk || !finOk) return "Desconocido";
 
             DateTime ahora = DateTime.Now;
 
-            // 2. Prioridad máxima: Si ya pasó la hora de fin, siempre es Finalizada
+            // 3. Ya terminó — el tiempo manda (incluso sobre "Reprogramado")
             if (ahora > fin) return "Finalizadas";
 
-            // 3. Prioridad media: Si está en ejecución, se muestra como tal
-            if (ahora >= inicio && ahora <= fin) return "En ejecución";
+            // 4. Transcurriendo ahora — el tiempo manda (incluso sobre "Reprogramado")
+            if (ahora >= inicio) return "En ejecución";
 
-            // Si la hora actual es antes del inicio, pero faltan menos de 15 minutos
-            if (ahora < inicio && ahora >= inicio.AddMinutes(-15))
-            {
-                return "Por iniciar";
-            }
+            // 5. Faltan menos de 15 minutos
+            if (ahora >= inicio.AddMinutes(-15)) return "Por iniciar";
 
-            // 4. Prioridad para el futuro: Si es antes de que inicie y hay un estado especial, lo usamos
-            if (!string.IsNullOrEmpty(estadoFijo)) return estadoFijo;
+            // 6. Aún en el futuro: si tiene estado especial guardado, lo respetamos
+            if (!string.IsNullOrEmpty(estadoFijo)) return estadoFijo; // "Reprogramado" cae aquí
 
-            // 5. Estado por defecto para el futuro
+            // 7. Futuro sin estado especial
             return "Programadas";
         }
 
@@ -236,6 +234,12 @@ namespace Proyecto_Reuniones
         // Muestra el mensaje de error apropiado y devuelve true si la operación debe bloquearse.
         private bool ReunionNoPuedeModificarse(string estadoReunion, string accion)
         {
+            if (estadoReunion == "Por iniciar")
+            {
+                MessageBox.Show($"No puedes {accion} una reunión que está por iniciar.", "No permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return true;
+            }
+
             if (estadoReunion == "En ejecución")
             {
                 MessageBox.Show($"No puedes {accion} una reunión que está en curso.", "No permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1065,55 +1069,38 @@ namespace Proyecto_Reuniones
             int idReunion = Convert.ToInt32(dataGridView1.CurrentRow.Cells["Cód."].Value);
             string estadoActual = dataGridView1.CurrentRow.Cells["Estado"].Value.ToString();
 
-            // 2. Usamos tu validación de estado (pero solo para ver si ya está Finalizada o en Ejecución)
+            // 2. Validación de estado
             if (ReunionNoPuedeModificarse(estadoActual, "eliminar")) return;
 
-            // Confirmación del usuario
-            DialogResult result = MessageBox.Show("¿Estás seguro de que deseas cancelar esta reunión?",
-                                                 "Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            // 3. Confirmación del usuario
+            DialogResult result = MessageBox.Show("¿Estás seguro de que deseas cancelar esta reunión?","Confirmar Cancelación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes) return;
+
+            try
             {
-                try
-                {
-                    var db = Conexion.ObtenerBaseDatos();
-                    var colReuniones = db.GetCollection<BsonDocument>("Reuniones");
+                var db = Conexion.ObtenerBaseDatos();
+                var colReuniones = db.GetCollection<BsonDocument>("Reuniones");
 
-                    // 3. ACTUALIZACIÓN 1: Cambiar estado de la reunión a "Cancelado"
-                    var filtroReunion = Builders<BsonDocument>.Filter.Eq("idReunion", idReunion);
-                    var updateReunion = Builders<BsonDocument>.Update.Set("estadoReunion", "Cancelado");
+                var filtroReunion = Builders<BsonDocument>.Filter.Eq("idReunion", idReunion);
 
-                    await colReuniones.UpdateOneAsync(filtroReunion, updateReunion);
+                // 4. ACTUALIZACIÓN 1: Cambiar estado de la reunión
+                var updateEstado = Builders<BsonDocument>.Update.Set("estadoReunion", "Cancelado");
+                await colReuniones.UpdateOneAsync(filtroReunion, updateEstado);
 
-                    // 4. ACTUALIZACIÓN 2: Cambiar la asistencia de todos los convocados a "En conflicto"
-                    // Buscamos la reunión para obtener la lista de investigadores
-                    var reunion = await colReuniones.Find(filtroReunion).FirstOrDefaultAsync();
+                // 5. ACTUALIZACIÓN 2: Cambiar asistencia de TODOS los convocados
+                var updateAsistencia = Builders<BsonDocument>.Update.Set("investigadoresConvocados.$[].asistencia", "conflicto");
+                await colReuniones.UpdateOneAsync(filtroReunion, updateAsistencia);
 
-                    if (reunion != null && reunion.Contains("investigadoresConvocados"))
-                    {
-                        var convocados = reunion["investigadoresConvocados"].AsBsonArray;
+                MessageBox.Show("La reunión ha sido cancelada y la asistencia quedó en conflicto.","Reunión Cancelada",MessageBoxButtons.OK,MessageBoxIcon.Information);
 
-                        // Recorremos cada investigador para poner su estado en "En conflicto"
-                        for (int i = 0; i < convocados.Count; i++)
-                        {
-                            convocados[i].AsBsonDocument["estadoAsistencia"] = "En conflicto";
-                        }
-
-                        // Guardamos la lista actualizada de investigadores en la reunión
-                        await colReuniones.UpdateOneAsync(filtroReunion,
-                            Builders<BsonDocument>.Update.Set("investigadoresConvocados", convocados));
-                    }
-
-                    MessageBox.Show("La reunión ha sido cancelada y se ha notificado el conflicto de asistencia.",
-                                    "Reunión Cancelada", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    await RecargarGrid();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al cancelar la reunión: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                await RecargarGrid();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show( $"Error al cancelar la reunión: {ex.Message}","Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }
+        
         }
 
         // ── Modificar reunión (solo Líder) ───────────────────────────────────
