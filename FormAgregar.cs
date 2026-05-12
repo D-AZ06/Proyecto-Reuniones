@@ -40,8 +40,6 @@ namespace Proyecto_Reuniones
             dtpHoraInicioReunion.ValueChanged += dtpHoraInicioReunion_ValueChanged;
             dtpHoraFinalReunion.ValueChanged += dtpHoraFinalReunion_ValueChanged;
             cboLugarReunion.Leave += cboLugarReunion_Leave;
-
-            // ── Evento en tiempo real para el label del motivo ──────────────
             txtMotivoReunion.TextChanged += txtMotivoReunion_TextChanged;
         }
 
@@ -98,7 +96,6 @@ namespace Proyecto_Reuniones
 
             txtMotivoReunion.MaxLength = MOTIVO_MAX_CHARS;
 
-            // Estado inicial del label y botón
             lblMensajeError.Text = string.Empty;
             lblMensajeError.ForeColor = Color.Gray;
             btnAgregarReunion.Enabled = true;
@@ -108,21 +105,11 @@ namespace Proyecto_Reuniones
                 DateTime ahora = DateTime.Now;
                 dtpFechaReunion.MinDate = DateTime.Today;
 
-                // Calculamos la hora de inicio válida: debe ser al menos 1 hora en el futuro
-                // y caer dentro del rango permitido (6 a.m. – 10 p.m.).
-                DateTime inicioValido = ahora.AddHours(1); // mínimo 1 hora de anticipación
-
+                DateTime inicioValido = ahora.AddHours(1);
                 if (inicioValido.TimeOfDay < new TimeSpan(HORA_MINIMA, 0, 0))
-                {
-                    // Entraron antes de las 6 a.m.: arrancar desde las 6 del mismo día.
                     inicioValido = ahora.Date.AddHours(HORA_MINIMA);
-                }
                 else if (inicioValido.TimeOfDay >= new TimeSpan(HORA_MAXIMA, 0, 0))
-                {
-                    // Entraron después de las 9 p.m. (hora + 1 h supera las 10 p.m.):
-                    // pasar al día siguiente a las 6 a.m.
                     inicioValido = ahora.Date.AddDays(1).AddHours(HORA_MINIMA);
-                }
 
                 dtpFechaReunion.Value = inicioValido.Date;
                 SincronizarHoras(inicioValido, inicioValido.AddMinutes(DURACION_MIN_MIN));
@@ -204,15 +191,14 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // Dentro del rango válido
             lblMensajeError.Text = $"✔ {len}/{MOTIVO_MAX_CHARS} caracteres";
             lblMensajeError.ForeColor = Color.SeaGreen;
             btnAgregarReunion.Enabled = true;
         }
 
-        // Los tres eventos de los DateTimePicker. Cada uno frena al usuario
-        // si intenta poner un valor inválido y lo regresa al valor anterior.
-        // La hora de inicio, al cambiar, arrastra la hora fin automáticamente.
+        // Los tres eventos de los DateTimePicker. Cada uno frena al usuario si intenta
+        // poner un valor inválido. Al cambiar fecha u hora se recarga la lista de
+        // investigadores y lugares para reflejar en tiempo real quién está disponible.
         private void dtpFechaReunion_ValueChanged(object sender, EventArgs e)
         {
             if (cargandoFormulario) return;
@@ -228,7 +214,6 @@ namespace Proyecto_Reuniones
                 DateTime anteriorValido = dtpFechaReunion.Value.AddDays(-1);
                 while (anteriorValido.DayOfWeek == DayOfWeek.Sunday)
                     anteriorValido = anteriorValido.AddDays(-1);
-
                 if (anteriorValido < DateTime.Today)
                     anteriorValido = DateTime.Today;
 
@@ -240,19 +225,18 @@ namespace Proyecto_Reuniones
             DateTime ahora = DateTime.Now;
             if (dtpFechaReunion.Value.Date == ahora.Date)
             {
-                // Si el usuario vuelve a seleccionar hoy, recalculamos igual que al abrir:
-                // inicio = ahora + 1 h, respetando el rango 6 a.m. – 10 p.m.
                 DateTime inicioHoy = ahora.AddHours(1);
                 if (inicioHoy.TimeOfDay < new TimeSpan(HORA_MINIMA, 0, 0))
                     inicioHoy = ahora.Date.AddHours(HORA_MINIMA);
                 else if (inicioHoy.TimeOfDay >= new TimeSpan(HORA_MAXIMA, 0, 0))
                 {
-                    // Ya no cabe ninguna reunión hoy; cambiamos al día siguiente.
                     DateTime manana = ahora.Date.AddDays(1);
                     while (manana.DayOfWeek == DayOfWeek.Sunday)
                         manana = manana.AddDays(1);
                     dtpFechaReunion.Value = manana;
                     SincronizarHoras(manana.AddHours(HORA_MINIMA), manana.AddHours(HORA_MINIMA).AddMinutes(DURACION_MIN_MIN));
+                    CargarInvestigadores(usuarioLogueado.IdSemillero);
+                    CargarLugares();
                     return;
                 }
                 SincronizarHoras(inicioHoy, inicioHoy.AddMinutes(DURACION_MIN_MIN));
@@ -265,6 +249,10 @@ namespace Proyecto_Reuniones
                         dtpFechaReunion.Value.Date.AddHours(HORA_MINIMA),
                         dtpFechaReunion.Value.Date.AddHours(HORA_MINIMA).AddMinutes(DURACION_MIN_MIN));
             }
+
+            // Recargamos listas al final para que reflejen el nuevo horario
+            CargarInvestigadores(usuarioLogueado.IdSemillero);
+            CargarLugares();
         }
 
         private void dtpHoraInicioReunion_ValueChanged(object sender, EventArgs e)
@@ -281,8 +269,6 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // Si es hoy, la reunión debe agendarse con al menos 1 hora de anticipación
-            // para que los participantes tengan tiempo de confirmar o rechazar la convocatoria.
             if (dtpFechaReunion.Value.Date == ahora.Date &&
                 dtpHoraInicioReunion.Value < ahora.AddHours(1))
             {
@@ -292,7 +278,6 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // Si la hora inicio sobrepasa el límite tal que ni la duración mínima cabe antes de las 10 p.m., se rechaza.
             DateTime finPropuesto = dtpHoraInicioReunion.Value.AddMinutes(DURACION_MIN_MIN);
             if (finPropuesto.TimeOfDay > new TimeSpan(HORA_MAXIMA, 0, 0))
             {
@@ -302,13 +287,15 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // Hora de inicio válida: la hora fin se ajusta automáticamente al mínimo
-            // para que el usuario no tenga que ir a moverla también.
+            // Hora válida: arrastrar hora fin y recargar listas
             valorAnteriorInicio = dtpHoraInicioReunion.Value;
             cargandoFormulario = true;
             dtpHoraFinalReunion.Value = finPropuesto;
             valorAnteriorFin = finPropuesto;
             cargandoFormulario = false;
+
+            CargarInvestigadores(usuarioLogueado.IdSemillero);
+            CargarLugares();
         }
 
         private void dtpHoraFinalReunion_ValueChanged(object sender, EventArgs e)
@@ -344,6 +331,9 @@ namespace Proyecto_Reuniones
             }
 
             valorAnteriorFin = dtpHoraFinalReunion.Value;
+
+            CargarInvestigadores(usuarioLogueado.IdSemillero);
+            CargarLugares();
         }
 
         private void SincronizarHoras(DateTime inicio, DateTime fin)
@@ -364,35 +354,7 @@ namespace Proyecto_Reuniones
             cargandoFormulario = false;
         }
 
-        // Cuando el usuario marca un investigador, antes de agregarlo se verifica
-        // que no tenga otra reunión en ese horario. Si la tiene, se desmarca solo.
-        private void clbListaInvestigadores_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            if (e.NewValue == CheckState.Checked)
-            {
-                var inv = (ItemInvestigador)clbListaInvestigadores.Items[e.Index];
-
-                if (ExisteConflictoInvestigador(
-                        dtpFechaReunion.Value.Date,
-                        dtpHoraInicioReunion.Value.TimeOfDay,
-                        dtpHoraFinalReunion.Value.TimeOfDay,
-                        new List<int> { inv.Id },
-                        out int idConflicto))
-                {
-                    MessageBox.Show(
-                        $"No es posible agregar a {inv.Nombre} como participante.\n\n" +
-                        $"Ya se encuentra convocado en la Reunión N.° {idConflicto},\n" +
-                        $"la cual se superpone con el horario seleccionado.\n\n" +
-                        $"Seleccione otro investigador o cambie el horario.",
-                        "Conflicto de participante", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                    e.NewValue = CheckState.Unchecked;
-                }
-            }
-        }
-
-        // Métodos que hablan directamente con MongoDB: generar el próximo ID,
-        // traer los investigadores del semillero y cargar los lugares ya usados.
+        // Métodos que hablan con MongoDB: ID, investigadores disponibles y lugares disponibles.
         private void GenerarIdReunion()
         {
             try
@@ -414,25 +376,74 @@ namespace Proyecto_Reuniones
             }
         }
 
+        // Carga solo los investigadores que están libres en el horario seleccionado.
+        // Se llama al abrir el form y cada vez que cambia la fecha, hora inicio o hora fin.
+        // Los que están ocupados simplemente no aparecen; si el horario cambia y quedan libres,
+        // reaparecen. Las reuniones canceladas no cuentan como ocupación.
         private void CargarInvestigadores(int idSemillero)
         {
             try
             {
+                // Traer todos los investigadores del semillero
                 var filtro = Builders<BsonDocument>.Filter.And(
                     Builders<BsonDocument>.Filter.Eq("idSemillero", idSemillero),
                     Builders<BsonDocument>.Filter.Eq("rolUsuario", "Investigador")
                 );
-                var lista = usuariosCol.Find(filtro).ToList();
+                var todosLosInvestigadores = usuariosCol.Find(filtro).ToList();
+
+                // Guardar los que ya estaban marcados para no perder la selección al recargar
+                var marcados = new HashSet<int>();
+                foreach (ItemInvestigador item in clbListaInvestigadores.CheckedItems)
+                    marcados.Add(item.Id);
+
+                // Calcular quiénes están ocupados en el horario actual
+                string fechaStr = dtpFechaReunion.Value.ToString("yyyy-MM-dd");
+                TimeSpan tI = dtpHoraInicioReunion.Value.TimeOfDay;
+                TimeSpan tF = dtpHoraFinalReunion.Value.TimeOfDay;
+
+                var reunionesDelDia = reunionesCol
+                    .Find(Builders<BsonDocument>.Filter.Eq("fechaReunion", fechaStr))
+                    .ToList();
+
+                var idsOcupados = new HashSet<int>();
+                foreach (var r in reunionesDelDia)
+                {
+                    if (!r.Contains("investigadoresConvocados")) continue;
+
+                    // Las reuniones canceladas no bloquean el horario de los investigadores
+                    if (r.Contains("estadoReunion") && r["estadoReunion"].AsString == "Cancelado") continue;
+
+                    // En modo edición, la reunión que estamos editando no bloquea a nadie
+                    if (modoEdicion && reunionAEditar != null &&
+                        r["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32()) continue;
+
+                    TimeSpan dbI = TimeSpan.Parse(r["horaInicio"].AsString);
+                    TimeSpan dbF = TimeSpan.Parse(r["horaFin"].AsString);
+
+                    if (tI >= dbF || tF <= dbI) continue; // no se solapan
+
+                    foreach (var conv in r["investigadoresConvocados"].AsBsonArray)
+                        idsOcupados.Add(conv.AsBsonDocument["idInvestigador"].AsInt32);
+                }
+
+                // Reconstruir la lista mostrando solo los disponibles
                 clbListaInvestigadores.Items.Clear();
+                foreach (var doc in todosLosInvestigadores)
+                {
+                    int idInv = doc["idUsuario"].AsInt32;
+                    if (idsOcupados.Contains(idInv)) continue; // ocupado: no aparece
 
-                foreach (var doc in lista)
-                    clbListaInvestigadores.Items.Add(new ItemInvestigador
-                    {
-                        Nombre = doc["nombreUsuario"].AsString,
-                        Id = doc["idUsuario"].AsInt32
-                    });
+                    clbListaInvestigadores.Items.Add(
+                        new ItemInvestigador { Nombre = doc["nombreUsuario"].AsString, Id = idInv },
+                        marcados.Contains(idInv)); // si ya estaba marcado, se mantiene marcado
+                }
 
-                if (lista.Count == 0)
+                if (todosLosInvestigadores.Count > 0 && clbListaInvestigadores.Items.Count == 0)
+                    MessageBox.Show(
+                        "Todos los investigadores del semillero están ocupados en ese horario.\n" +
+                        "Seleccione una fecha u hora diferente.",
+                        "Sin investigadores disponibles", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (todosLosInvestigadores.Count == 0)
                     MessageBox.Show(
                         "No se encontraron investigadores registrados en su semillero.\n" +
                         "Contacte al administrador si cree que esto es un error.",
@@ -498,22 +509,41 @@ namespace Proyecto_Reuniones
             return null;
         }
 
-        // Los lugares se sacan de las reuniones ya guardadas en BD, no de una lista fija.
-        // Si el usuario escribe uno nuevo y es válido, se agrega al combo para esa sesión
-        // y quedará disponible para todos la próxima vez que abran el formulario.
+        // Los lugares se sacan de las reuniones ya guardadas en BD, excluyendo
+        // los que ya están reservados en el horario actual. Las canceladas no bloquean.
+        // Si el usuario escribe uno nuevo, el evento Leave verifica si está disponible.
         private void CargarLugares()
         {
             try
             {
-                var todasReuniones = reunionesCol
-                    .Find(new BsonDocument())
-                    .Project("{lugarReunion: 1, _id: 0}")
-                    .ToList();
+                var todasReuniones = reunionesCol.Find(new BsonDocument()).ToList();
 
+                TimeSpan tI = dtpHoraInicioReunion.Value.TimeOfDay;
+                TimeSpan tF = dtpHoraFinalReunion.Value.TimeOfDay;
+                string fechaActual = dtpFechaReunion.Value.ToString("yyyy-MM-dd");
+
+                // Lugares ocupados en el horario actual (ignorando canceladas)
+                var lugaresOcupados = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var r in todasReuniones)
+                {
+                    if (!r.Contains("lugarReunion")) continue;
+                    if (r.Contains("estadoReunion") && r["estadoReunion"].AsString == "Cancelado") continue;
+                    if (r["fechaReunion"].AsString != fechaActual) continue;
+                    if (modoEdicion && reunionAEditar != null &&
+                        r["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32()) continue;
+
+                    TimeSpan dbI = TimeSpan.Parse(r["horaInicio"].AsString);
+                    TimeSpan dbF = TimeSpan.Parse(r["horaFin"].AsString);
+                    if (tI < dbF && tF > dbI)
+                        lugaresOcupados.Add(r["lugarReunion"].AsString.Trim());
+                }
+
+                // Todos los lugares conocidos menos los ocupados ahora
                 var lugaresUnicos = todasReuniones
                     .Where(d => d.Contains("lugarReunion") && !string.IsNullOrWhiteSpace(d["lugarReunion"].AsString))
                     .Select(d => d["lugarReunion"].AsString.Trim())
                     .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Where(l => !lugaresOcupados.Contains(l))
                     .OrderBy(l => l)
                     .ToList();
 
@@ -569,52 +599,8 @@ namespace Proyecto_Reuniones
             AgregarLugarAlComboSiEsNuevo(lugar);
         }
 
-        // Los tres métodos de conflicto funcionan igual: buscan en la BD reuniones
-        // en la misma fecha que se superpongan con el horario dado, y retornan el ID
-        // de la reunión que está ocupando ese espacio. Si no hay conflicto, retornan false.
-        private bool ExisteConflictoInvestigador(DateTime fecha, TimeSpan tI, TimeSpan tF,
-                                                  List<int> ids, out int idReunionConflicto)
-        {
-            idReunionConflicto = 0;
-            try
-            {
-                var filtro = Builders<BsonDocument>.Filter.Eq("fechaReunion", fecha.ToString("yyyy-MM-dd"));
-                var reuniones = reunionesCol.Find(filtro).ToList();
-
-                foreach (var doc in reuniones)
-                {
-                    if (!doc.Contains("investigadoresConvocados")) continue;
-
-                    if (modoEdicion && reunionAEditar != null &&
-                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
-                        continue;
-
-                    var idsDB = doc["investigadoresConvocados"]
-                                    .AsBsonArray
-                                    .Select(x => x.AsBsonDocument["idInvestigador"].AsInt32);
-
-                    if (ids.Any(id => idsDB.Contains(id)))
-                    {
-                        TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
-                        TimeSpan dbF = TimeSpan.Parse(doc["horaFin"].AsString);
-
-                        if (tI < dbF && tF > dbI)
-                        {
-                            idReunionConflicto = doc["idReunion"].AsInt32;
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Error al verificar conflictos de participantes:\n\n{ex.Message}",
-                    "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return false;
-        }
-
+        // Busca en la BD si ya hay una reunión activa (no cancelada) en la misma fecha,
+        // lugar y horario. Retorna el ID de la que lo ocupa, o false si está libre.
         private bool ExisteConflictoLugar(DateTime fecha, TimeSpan tI, TimeSpan tF,
                                            string lugar, out int idReunionConflicto)
         {
@@ -629,9 +615,11 @@ namespace Proyecto_Reuniones
 
                 foreach (var doc in reuniones)
                 {
+                    // Las reuniones canceladas no bloquean el lugar
+                    if (doc.Contains("estadoReunion") && doc["estadoReunion"].AsString == "Cancelado") continue;
+
                     if (modoEdicion && reunionAEditar != null &&
-                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
-                        continue;
+                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32()) continue;
 
                     TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
                     TimeSpan dbF = TimeSpan.Parse(doc["horaFin"].AsString);
@@ -647,46 +635,6 @@ namespace Proyecto_Reuniones
             {
                 MessageBox.Show(
                     $"Error al verificar la disponibilidad del lugar:\n\n{ex.Message}",
-                    "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return false;
-        }
-
-        // Revisa si el líder ya tiene otra reunión que se superponga en ese horario,
-        // buscándolo como idLider dentro de la colección Reuniones.
-        private bool ExisteConflictoLider(DateTime fecha, TimeSpan tI, TimeSpan tF,
-                                           int idLider, out int idReunionConflicto)
-        {
-            idReunionConflicto = 0;
-            try
-            {
-                var filtro = Builders<BsonDocument>.Filter.And(
-                    Builders<BsonDocument>.Filter.Eq("fechaReunion", fecha.ToString("yyyy-MM-dd")),
-                    Builders<BsonDocument>.Filter.Eq("idLider", idLider)
-                );
-                var reuniones = reunionesCol.Find(filtro).ToList();
-
-                foreach (var doc in reuniones)
-                {
-                    // En modo edición ignoramos la reunión que estamos modificando
-                    if (modoEdicion && reunionAEditar != null &&
-                        doc["idReunion"].ToInt32() == reunionAEditar["idReunion"].ToInt32())
-                        continue;
-
-                    TimeSpan dbI = TimeSpan.Parse(doc["horaInicio"].AsString);
-                    TimeSpan dbF = TimeSpan.Parse(doc["horaFin"].AsString);
-
-                    if (tI < dbF && tF > dbI)
-                    {
-                        idReunionConflicto = doc["idReunion"].AsInt32;
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Error al verificar la disponibilidad del líder:\n\n{ex.Message}",
                     "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return false;
@@ -775,50 +723,6 @@ namespace Proyecto_Reuniones
                 return;
             }
 
-            // ── 8. Conflicto de participantes ──────────────────────────────
-            var idsSeleccionados = clbListaInvestigadores.CheckedItems
-                                        .Cast<ItemInvestigador>()
-                                        .Select(i => i.Id)
-                                        .ToList();
-            if (ExisteConflictoInvestigador(
-                    dtpFechaReunion.Value.Date,
-                    dtpHoraInicioReunion.Value.TimeOfDay,
-                    dtpHoraFinalReunion.Value.TimeOfDay,
-                    idsSeleccionados,
-                    out int idInvOcupado))
-            {
-                MessageBox.Show(
-                    $"Uno o más participantes seleccionados ya están convocados\n" +
-                    $"en la Reunión N.° {idInvOcupado} con el mismo horario.\n\n" +
-                    $"Revise la lista de participantes o cambie el horario.",
-                    "Conflicto de participantes", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // ── 9. Disponibilidad del líder ────────────────────────────────
-            // El líder también puede estar convocado en otra reunión en ese horario,
-            // ya sea como investigador o como líder de otra reunión.
-            if (ExisteConflictoInvestigador(
-                    dtpFechaReunion.Value.Date,
-                    dtpHoraInicioReunion.Value.TimeOfDay,
-                    dtpHoraFinalReunion.Value.TimeOfDay,
-                    new List<int> { usuarioLogueado.IdUsuario },
-                    out int idLiderOcupado) ||
-                ExisteConflictoLider(
-                    dtpFechaReunion.Value.Date,
-                    dtpHoraInicioReunion.Value.TimeOfDay,
-                    dtpHoraFinalReunion.Value.TimeOfDay,
-                    usuarioLogueado.IdUsuario,
-                    out idLiderOcupado))
-            {
-                MessageBox.Show(
-                    $"Usted ya tiene una reunión agendada en ese horario (Reunión N.° {idLiderOcupado}).\n\n" +
-                    $"No es posible ser líder de dos reuniones simultáneas.\n" +
-                    $"Seleccione una fecha u horario diferente.",
-                    "Líder no disponible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             // ── Confirmación ───────────────────────────────────────────────
             string msgConf = modoEdicion
                 ? "¿Está seguro de que desea guardar los cambios en esta reunión?"
@@ -847,8 +751,7 @@ namespace Proyecto_Reuniones
                         .Set("horaFin", dtpHoraFinalReunion.Value.ToString("HH:mm"))
                         .Set("motivoReunion", txtMotivoReunion.Text.Trim())
                         .Set("lugarReunion", lugarSeleccionado)
-                        .Set("investigadoresConvocados", invs)
-                        .Set("estadoReunion", "Reprogramado");
+                        .Set("investigadoresConvocados", invs);
 
                     reunionesCol.UpdateOne(filtroUpdate, update);
                     MessageBox.Show(
@@ -859,15 +762,14 @@ namespace Proyecto_Reuniones
                 else
                 {
                     var doc = new BsonDocument {
-                        { "idReunion",                 _idReunionGenerado },
-                        { "fechaReunion",              dtpFechaReunion.Value.ToString("yyyy-MM-dd") },
-                        { "horaInicio",                dtpHoraInicioReunion.Value.ToString("HH:mm") },
-                        { "horaFin",                   dtpHoraFinalReunion.Value.ToString("HH:mm") },
-                        { "motivoReunion",             txtMotivoReunion.Text.Trim() },
-                        { "lugarReunion",              lugarSeleccionado },
-                        { "idLider",                   usuarioLogueado.IdUsuario },
-                        { "investigadoresConvocados",  invs },  // nombre consistente con el resto del sistema
-                        { "estadoReunion", "" }
+                        { "idReunion",               _idReunionGenerado },
+                        { "fechaReunion",            dtpFechaReunion.Value.ToString("yyyy-MM-dd") },
+                        { "horaInicio",              dtpHoraInicioReunion.Value.ToString("HH:mm") },
+                        { "horaFin",                 dtpHoraFinalReunion.Value.ToString("HH:mm") },
+                        { "motivoReunion",           txtMotivoReunion.Text.Trim() },
+                        { "lugarReunion",            lugarSeleccionado },
+                        { "idLider",                 usuarioLogueado.IdUsuario },
+                        { "investigadoresConvocados", invs }
                     };
 
                     reunionesCol.InsertOne(doc);
@@ -876,7 +778,6 @@ namespace Proyecto_Reuniones
                         "Reunión guardada", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LimpiarFormulario();
                 }
-                this.Close();
             }
             catch (Exception ex)
             {
@@ -893,10 +794,11 @@ namespace Proyecto_Reuniones
             cargandoFormulario = true;
             txtMotivoReunion.Clear();
             cboLugarReunion.SelectedIndex = -1;
-            cboLugarReunion.Text = string.Empty;  // ← vacía también lo escrito
+            cboLugarReunion.Text = string.Empty;
             lblMensajeError.Text = string.Empty;
             lblMensajeError.ForeColor = Color.Gray;
             btnAgregarReunion.Enabled = true;
+
             DateTime ahora = DateTime.Now;
             DateTime inicioLimpio = ahora.AddHours(1);
             if (inicioLimpio.TimeOfDay < new TimeSpan(HORA_MINIMA, 0, 0))
@@ -906,21 +808,24 @@ namespace Proyecto_Reuniones
 
             dtpFechaReunion.Value = inicioLimpio.Date;
             SincronizarHoras(inicioLimpio, inicioLimpio.AddMinutes(DURACION_MIN_MIN));
-            for (int i = 0; i < clbListaInvestigadores.Items.Count; i++)
-                clbListaInvestigadores.SetItemChecked(i, false);
-            GenerarIdReunion();
             cargandoFormulario = false;
+
+            // Recargar con el nuevo horario ya calculado.
+            // El CheckedListBox se limpia primero para que nadie quede preseleccionado
+            // en la nueva reunión, independientemente de quién se escogió en la anterior.
+            clbListaInvestigadores.Items.Clear();
+            GenerarIdReunion();
+            CargarInvestigadores(usuarioLogueado.IdSemillero);
+            CargarLugares();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            var resultado = MessageBox.Show("¿Está seguro de que desea cancelar?\nLos datos ingresados se perderán.", "Confirmar cancelación");
-
-            if (resultado == DialogResult.OK) 
-            {
-                    this.Close();
-               
-            }
+            if (MessageBox.Show(
+                    "¿Está seguro de que desea cancelar?\nLos datos ingresados se perderán.",
+                    "Confirmar cancelación",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                this.Close();
         }
 
         // El timer actualiza el label de fecha/hora cada segundo.
@@ -931,8 +836,7 @@ namespace Proyecto_Reuniones
         }
         private void timer1_Tick(object sender, EventArgs e) => ActualizarReloj();
 
-        // ── Stubs vacíos generados por el diseñador ──────────────────────────
-        private void button1_Click(object sender, EventArgs e) { }
+        
         private void dtpHoraFinalReunion_ValueChanged_1(object sender, EventArgs e) { }
         private void dtpHoraInicioReunion_ValueChanged_1(object sender, EventArgs e) { }
         private void label4_Click(object sender, EventArgs e) { }
@@ -940,13 +844,9 @@ namespace Proyecto_Reuniones
         private void dtpFechaReunion_ValueChanged_1(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
         private void groupBox1_Enter(object sender, EventArgs e) { }
-        private void pictureBox6_Click(object sender, EventArgs e) { }
         private void label11_Click(object sender, EventArgs e) { }
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  CLASE AUXILIAR
-    // ════════════════════════════════════════════════════════════════════════
     public class ItemInvestigador
     {
         public string Nombre { get; set; }

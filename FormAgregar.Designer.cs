@@ -248,7 +248,7 @@
             this.clbListaInvestigadores.ScrollAlwaysVisible = true;
             this.clbListaInvestigadores.Size = new System.Drawing.Size(356, 148);
             this.clbListaInvestigadores.TabIndex = 19;
-            this.clbListaInvestigadores.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbListaInvestigadores_ItemCheck);
+            
             // 
             // txtIdSemillero
             // 
